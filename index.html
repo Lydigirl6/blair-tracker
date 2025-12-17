@@ -15,10 +15,13 @@
     --text: rgba(255,255,255,.92);
     --muted: rgba(255,255,255,.65);
     --muted2: rgba(255,255,255,.50);
-    --accent: #7C3AED; /* purple */
-    --accent2:#22C55E; /* green */
-    --accent3:#06B6D4; /* cyan */
-    --danger:#EF4444;
+
+    /* NEW THEME: pink -> orange */
+    --a1:#EC4899;  /* pink */
+    --a2:#FB923C;  /* orange */
+    --good:#22C55E;
+    --bad:#EF4444;
+
     --shadow: 0 18px 60px rgba(0,0,0,.55);
     --radius: 18px;
   }
@@ -26,12 +29,12 @@
   *{box-sizing:border-box}
   body{
     margin:0;
-    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
     color:var(--text);
     background:
-      radial-gradient(1000px 550px at 15% 10%, rgba(124,58,237,.25), transparent 60%),
-      radial-gradient(900px 500px at 85% 20%, rgba(6,182,212,.18), transparent 60%),
-      radial-gradient(900px 550px at 60% 95%, rgba(34,197,94,.12), transparent 60%),
+      radial-gradient(1000px 550px at 15% 10%, rgba(236,72,153,.22), transparent 60%),
+      radial-gradient(900px 500px at 85% 20%, rgba(251,146,60,.18), transparent 60%),
+      radial-gradient(900px 550px at 60% 95%, rgba(236,72,153,.10), transparent 60%),
       linear-gradient(180deg, var(--bg1), var(--bg2));
     min-height:100vh;
     padding:22px;
@@ -42,23 +45,11 @@
     display:flex; justify-content:space-between; align-items:flex-end; gap:16px; flex-wrap:wrap;
     margin-bottom:14px;
   }
-  .title{
-    display:flex; flex-direction:column; gap:6px;
-  }
-  h1{
-    margin:0;
-    font-size:26px;
-    letter-spacing:.2px;
-  }
-  .sub{
-    margin:0;
-    color:var(--muted);
-    font-size:13px;
-    line-height:1.35;
-  }
-  .pillTop{
-    display:flex; gap:8px; flex-wrap:wrap; align-items:center;
-  }
+  .title{display:flex; flex-direction:column; gap:6px;}
+  h1{margin:0; font-size:26px; letter-spacing:.2px;}
+  .sub{margin:0; color:var(--muted); font-size:13px; line-height:1.35;}
+
+  .pillTop{display:flex; gap:8px; flex-wrap:wrap; align-items:center;}
   .tag{
     font-size:12px;
     padding:6px 10px;
@@ -67,17 +58,15 @@
     border-radius:999px;
     color:var(--muted);
   }
-  .tag strong{color:var(--text); font-weight:700;}
+  .tag strong{color:var(--text); font-weight:800;}
 
   .grid{
     display:grid;
-    grid-template-columns: 440px 1fr;
+    grid-template-columns: 460px 1fr;
     gap:16px;
     align-items:start;
   }
-  @media (max-width: 980px){
-    .grid{grid-template-columns:1fr;}
-  }
+  @media (max-width: 980px){ .grid{grid-template-columns:1fr;} }
 
   .card{
     border:1px solid var(--stroke);
@@ -99,6 +88,7 @@
     text-transform:uppercase;
     color:var(--muted);
   }
+
   .btn{
     cursor:pointer;
     border:1px solid var(--stroke);
@@ -111,34 +101,18 @@
   }
   .btn:hover{ background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.18); }
   .btn:active{ transform: translateY(1px); }
-  .btnSmall{
-    padding:7px 10px;
-    font-size:12px;
-    border-radius:11px;
-    color:var(--muted);
-  }
+  .btnSmall{ padding:7px 10px; font-size:12px; border-radius:11px; color:var(--muted); }
 
   .pad{padding:14px;}
-  .section{
-    margin-top:10px;
-  }
+  .section{margin-top:10px;}
   .sectionTitle{
     display:flex; align-items:center; justify-content:space-between; gap:10px;
     margin:8px 0 8px;
   }
-  .sectionTitle .label{
-    font-size:13px;
-    color:var(--text);
-    font-weight:700;
-  }
-  .hint{
-    font-size:12px;
-    color:var(--muted2);
-  }
+  .sectionTitle .label{font-size:13px; color:var(--text); font-weight:800;}
+  .hint{font-size:12px; color:var(--muted2);}
 
-  .btnGrid{
-    display:flex; flex-wrap:wrap; gap:8px;
-  }
+  .btnGrid{ display:flex; flex-wrap:wrap; gap:8px; }
   .pick{
     border:1px solid var(--stroke);
     background: rgba(255,255,255,.04);
@@ -154,6 +128,7 @@
     background: rgba(255,255,255,.35);
     box-shadow: 0 0 0 3px rgba(255,255,255,.06);
   }
+
   .pick.onYes{
     border-color: rgba(34,197,94,.50);
     background: rgba(34,197,94,.10);
@@ -167,8 +142,6 @@
   .pick.onNo .dot{ background: rgba(239,68,68,.95); box-shadow: 0 0 0 3px rgba(239,68,68,.18); }
 
   .pick:hover{ border-color: rgba(255,255,255,.18); background: rgba(255,255,255,.06); }
-  .pick.onYes:hover{ border-color: rgba(34,197,94,.60); }
-  .pick.onNo:hover{ border-color: rgba(239,68,68,.65); }
 
   .legend{
     display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; color:var(--muted);
@@ -190,11 +163,12 @@
   .topPick{
     padding:16px;
     background:
-      radial-gradient(650px 240px at 25% 0%, rgba(124,58,237,.22), transparent 60%),
-      radial-gradient(650px 240px at 85% 10%, rgba(6,182,212,.18), transparent 60%),
+      radial-gradient(650px 240px at 25% 0%, rgba(236,72,153,.20), transparent 60%),
+      radial-gradient(650px 240px at 85% 10%, rgba(251,146,60,.16), transparent 60%),
       linear-gradient(180deg, var(--card2), rgba(255,255,255,.04));
     border-bottom:1px solid var(--stroke);
   }
+
   .topRow{
     display:flex; justify-content:space-between; gap:14px; align-items:flex-start; flex-wrap:wrap;
   }
@@ -211,8 +185,9 @@
     letter-spacing:.2px;
     margin:0;
   }
+
   .scoreBox{
-    min-width:200px;
+    min-width:220px;
     border:1px solid var(--stroke);
     background: rgba(255,255,255,.04);
     border-radius:14px;
@@ -224,7 +199,7 @@
     margin:0;
   }
   .bar{
-    height:8px;
+    height:10px;
     background: rgba(255,255,255,.10);
     border-radius:999px;
     overflow:hidden;
@@ -233,7 +208,7 @@
   .bar > div{
     height:100%;
     width:0%;
-    background: linear-gradient(90deg, var(--accent), var(--accent3));
+    background: linear-gradient(90deg, var(--a1), var(--a2));
   }
 
   .evWrap{ margin-top:10px; display:flex; flex-wrap:wrap; gap:8px; }
@@ -246,6 +221,7 @@
     color:var(--muted);
   }
   .ev strong{ color: var(--text); }
+
   .whyBox{
     margin-top:10px;
     color:var(--muted);
@@ -273,20 +249,9 @@
     background: rgba(255,255,255,.03);
     color:var(--muted);
   }
-  .itemRight{
-    text-align:right;
-    min-width:120px;
-  }
-  .miniScore{
-    font-weight:900;
-    font-size:14px;
-    margin:0;
-  }
-  .miniHint{
-    font-size:11px;
-    color:var(--muted2);
-    margin-top:4px;
-  }
+  .itemRight{ text-align:right; min-width:140px; }
+  .miniScore{ font-weight:900; font-size:14px; margin:0; }
+  .miniHint{ font-size:11px; color:var(--muted2); margin-top:4px; }
 
   .footerNote{
     padding:12px 14px;
@@ -296,15 +261,26 @@
     background: rgba(255,255,255,.02);
   }
 
+  .emptyState{
+    border:1px dashed rgba(255,255,255,.20);
+    background: rgba(255,255,255,.03);
+    border-radius:14px;
+    padding:12px;
+    color:var(--muted);
+    font-size:13px;
+    line-height:1.4;
+    max-width:520px;
+  }
+
   .glow{
     position:fixed;
     inset:-200px;
     pointer-events:none;
     background:
-      radial-gradient(800px 350px at 20% 15%, rgba(124,58,237,.14), transparent 60%),
-      radial-gradient(900px 400px at 85% 35%, rgba(6,182,212,.10), transparent 60%);
+      radial-gradient(800px 350px at 20% 15%, rgba(236,72,153,.12), transparent 60%),
+      radial-gradient(900px 400px at 85% 35%, rgba(251,146,60,.10), transparent 60%);
     filter: blur(10px);
-    opacity:.8;
+    opacity:.85;
   }
 </style>
 </head>
@@ -316,7 +292,7 @@
   <div class="header">
     <div class="title">
       <h1>Blair Ghost Tracker</h1>
-      <p class="sub">Click what you’ve seen. It ranks the most likely ghost even if you only have a little info.</p>
+      <p class="sub">Tap what you’ve seen. It ranks the most likely ghost even if you only have a little info.</p>
     </div>
     <div class="pillTop">
       <div class="tag"><strong>Tip:</strong> Salt footprints = <strong>No</strong> → Wraith</div>
@@ -325,7 +301,7 @@
   </div>
 
   <div class="grid">
-    <!-- LEFT: PICKERS -->
+    <!-- LEFT -->
     <div class="card">
       <div class="cardHead">
         <h2>Your Observations</h2>
@@ -357,19 +333,17 @@
       </div>
     </div>
 
-    <!-- RIGHT: RESULTS -->
+    <!-- RIGHT -->
     <div class="card">
       <div class="topPick" id="topPick"></div>
       <div class="rankList" id="rankList"></div>
-      <div class="footerNote">
-        This is “most likely,” not perfect proof. If you’re unsure about a clue, leave it Unknown.
-      </div>
+      <div class="footerNote">If you’re unsure about a clue, leave it Unknown.</div>
     </div>
   </div>
 </div>
 
 <script>
-  // ---------------- EVIDENCE + CLUES ----------------
+  // Evidence is fixed in Blair (7 types)
   const EVIDENCE = [
     "EMF Level 5",
     "Freezing Evidence",
@@ -380,24 +354,62 @@
     "SLS Anomaly"
   ];
 
+  // Expanded observations list (you can keep adding)
   const CLUES = [
     { key:"saltFootprints", label:"Left footprints in salt" },
+    { key:"neverStepsSalt", label:"Never steps in salt" },
+
     { key:"targetsOnePlayer", label:"Targets only one player" },
     { key:"bansheeScreech", label:"Parabolic: Banshee screech" },
+
     { key:"demonRoar", label:"Parabolic: Demon roar" },
     { key:"crucifixRangeLong", label:"Crucifix worked from far away" },
     { key:"earlyHuntAnySanity", label:"Hunted at high / any sanity" },
-    { key:"fasterWhenSeesPlayer", label:"Slow → FAST when it sees you" },
-    { key:"blindHunt", label:"Blind during hunts (movement-based)" },
-    { key:"changesFavoriteRoom", label:"Changes favorite room a lot" },
-    { key:"attractedToItems", label:"Moves to room with most items" },
+
     { key:"fakeSounds", label:"Mimics equipment sounds" },
-    { key:"fakeHuntEnd", label:"Faked hunt ending / went silent" }
+    { key:"fakeFootsteps", label:"Fake footsteps during hunts" },
+
+    { key:"neverLeavesRoom", label:"Never leaves its favorite room" },
+    { key:"fasterNearRoom", label:"Gets faster near its room" },
+
+    { key:"fakeHuntEnd", label:"Faked hunt ending / went silent" },
+    { key:"drainsStamina", label:"Drained stamina (huge drain)" },
+    { key:"noSpeedUpChase", label:"Does NOT speed up while chasing" },
+
+    { key:"shattersLights", label:"Shatters lights / hates light" },
+    { key:"turnsOffLightsInstant", label:"Instantly turns off lights in its room" },
+    { key:"blowsCandlesFar", label:"Blows out candles from far away" },
+
+    { key:"attractedToItems", label:"Moves to room with most items" },
+    { key:"throwsManyItems", label:"Throws multiple items at once" },
+    { key:"doubleInteraction", label:"Two interactions at same time" },
+
+    { key:"slowThenFastSees", label:"Slow until it sees you, then FAST" },
+
+    { key:"incenseResets", label:"Incense resets / slows it a lot" },
+    { key:"incenseLongStun", label:"Incense stuns longer than normal" },
+
+    { key:"shyLowActivity", label:"Very shy / low activity" },
+    { key:"huntsLowSanityOnly", label:"Only hunts at low sanity" },
+
+    { key:"invisibleNearWater", label:"Invisible near water" },
+    { key:"waterOffTriggersHunt", label:"Turning off water triggered hunt" },
+    { key:"uniqueFingerprintsEven", label:"Unique fingerprints (even count)" },
+
+    { key:"floatsManifest", label:"Floats during manifestation" },
+    { key:"roamsALot", label:"Roams very far / a lot" },
+    { key:"teleportsToPlayer", label:"Teleported to player (EMF spike)" },
+
+    { key:"changesFavoriteRoom", label:"Changes favorite room a lot" },
+    { key:"multipleColdRooms", label:"Multiple cold rooms at once" },
+
+    { key:"uniqueSpiritBoxGrowl", label:"Unique Spirit Box growl" },
+
+    { key:"blindHunt", label:"Blind during hunts (movement-based)" },
+    { key:"walksAwayIfStill", label:"Walks away if you stand still" }
   ];
 
-  // ---------------- GHOST DATABASE ----------------
-  // Evidence from your Blair table, traits from what you pasted.
-  // NOTE: Unknown traits are simply not included (so you don’t get punished).
+  // Ghost database (from what you gave earlier; unknown traits omitted)
   const ghosts = [
     { name:"Banshee",
       evidence:["EMF Level 5","Freezing Evidence","SLS Anomaly"],
@@ -407,74 +419,61 @@
       evidence:["Freezing Evidence","Book Evidence","Spirit Box"],
       traits:{ earlyHuntAnySanity:true, crucifixRangeLong:true, demonRoar:true, saltFootprints:true }
     },
-    { name:"Faejkur",
-      evidence:["EMF Level 5","Freezing Evidence","Book Evidence"],
-      traits:{ fakeSounds:true, saltFootprints:true }
+    { name:"Faker",
+      evidence:["EMF Level 5","Freezing Evidence","Book Evidence"], /* if your game uses this set */
+      traits:{ fakeSounds:true, fakeFootsteps:true, saltFootprints:true }
     },
-    { name:"Harrow",
-      evidence:["Book Evidence","Ghost Orbs","SLS Anomaly"],
-      traits:{ saltFootprints:true }
-    },
-    { name:"Krasue",
-      evidence:["EMF Level 5","Freezing Evidence","UV Handprint"],
-      traits:{ saltFootprints:true }
+    { name:"Haru",
+      evidence:["Ghost Orbs","Book Evidence","SLS Anomaly"],
+      traits:{ neverLeavesRoom:true, fasterNearRoom:true, saltFootprints:true }
     },
     { name:"Lament",
       evidence:["EMF Level 5","Ghost Orbs","Spirit Box"],
-      traits:{ fakeHuntEnd:true, saltFootprints:true }
+      traits:{ fakeHuntEnd:true, drainsStamina:true, noSpeedUpChase:true, saltFootprints:true }
     },
-    { name:"Mare",
+    { name:"Mar",
       evidence:["Freezing Evidence","Spirit Box","SLS Anomaly"],
-      traits:{ saltFootprints:true }
+      traits:{ shattersLights:true, blowsCandlesFar:true, turnsOffLightsInstant:true, saltFootprints:true }
     },
     { name:"Nook",
       evidence:["EMF Level 5","Freezing Evidence","Ghost Orbs"],
-      traits:{ changesFavoriteRoom:true, attractedToItems:true, saltFootprints:true }
+      traits:{ attractedToItems:true, changesFavoriteRoom:true, saltFootprints:true }
     },
     { name:"Poltergeist",
       evidence:["UV Handprint","Ghost Orbs","Spirit Box"],
-      traits:{ saltFootprints:true }
+      traits:{ throwsManyItems:true, doubleInteraction:true, saltFootprints:true }
     },
     { name:"Revenant",
-      evidence:["EMF Level 5","Book Evidence","UV Handprint"],
-      traits:{ fasterWhenSeesPlayer:true, saltFootprints:true }
+      evidence:["EMF Level 5","UV Handprint","Book Evidence"],
+      traits:{ slowThenFastSees:true, incenseResets:true, saltFootprints:true }
     },
     { name:"Shade",
       evidence:["EMF Level 5","Book Evidence","SLS Anomaly"],
-      traits:{ saltFootprints:true }
+      traits:{ shyLowActivity:true, huntsLowSanityOnly:true, saltFootprints:true }
     },
     { name:"Spirit",
-      evidence:["Book Evidence","UV Handprint","Spirit Box"],
-      traits:{ saltFootprints:true }
+      evidence:["UV Handprint","Book Evidence","Spirit Box"],
+      traits:{ incenseLongStun:true, saltFootprints:true }
     },
-    { name:"Strigoi",
+    { name:"Striod",
       evidence:["EMF Level 5","UV Handprint","Ghost Orbs"],
-      traits:{ saltFootprints:true }
-    },
-    { name:"Vuult",
-      evidence:["EMF Level 5","Ghost Orbs","SLS Anomaly"],
-      traits:{ saltFootprints:true }
+      traits:{ invisibleNearWater:true, waterOffTriggersHunt:true, uniqueFingerprintsEven:true, saltFootprints:true }
     },
     { name:"Wraith",
       evidence:["Freezing Evidence","Ghost Orbs","SLS Anomaly"],
-      traits:{ saltFootprints:false } // never steps in salt
+      traits:{ neverStepsSalt:true, saltFootprints:false, roamsALot:true, floatsManifest:true, teleportsToPlayer:true }
     },
     { name:"Yama",
-      evidence:["Book Evidence","Spirit Box","SLS Anomaly"],
-      traits:{ changesFavoriteRoom:true, saltFootprints:true }
+      evidence:["Freezing Evidence","Ghost Orbs","SLS Anomaly"],
+      traits:{ changesFavoriteRoom:true, multipleColdRooms:true, uniqueSpiritBoxGrowl:true, saltFootprints:true }
     },
-    { name:"Yurei",
+    { name:"Yuri",
       evidence:["Freezing Evidence","UV Handprint","Spirit Box"],
-      traits:{ blindHunt:true, saltFootprints:true }
-    },
-    { name:"ZoZo",
-      evidence:["EMF Level 5","UV Handprint","Spirit Box"],
-      traits:{ saltFootprints:true }
+      traits:{ blindHunt:true, walksAwayIfStill:true, saltFootprints:true }
     }
   ];
 
-  // ---------------- STATE (tri-state) ----------------
-  // tri-state: null = unknown, true = yes, false = no
+  // tri-state: null unknown, true yes, false no
   const state = {
     evidence: Object.fromEntries(EVIDENCE.map(e => [e, null])),
     clues: Object.fromEntries(CLUES.map(c => [c.key, null]))
@@ -487,7 +486,6 @@
   const resetBtn = document.getElementById("resetBtn");
 
   function cycleTri(current){
-    // Unknown -> Yes -> No -> Unknown
     if (current === null) return true;
     if (current === true) return false;
     return null;
@@ -519,16 +517,46 @@
     return (CLUES.find(c => c.key === key)?.label) || key;
   }
 
-  // ---------------- SCORING (flexible, “most likely”) ----------------
-  // Evidence is stronger than clues.
-  // Unknown = no effect.
-  // Contradictions lower score; matches raise score.
+  function inputsCount(){
+    return (
+      Object.values(state.evidence).filter(v => v !== null).length +
+      Object.values(state.clues).filter(v => v !== null).length
+    );
+  }
+
+  // Returns a 0-100 confidence percent based on how far ahead the top ghost is,
+  // and how much info you entered. With no inputs, it stays 0%.
+  function confidencePercent(ranked){
+    const count = inputsCount();
+    if (count === 0) return 0;
+
+    const best = ranked[0];
+    const second = ranked[1];
+
+    const bestScore = best?.score ?? 0;
+    const secondScore = second?.score ?? bestScore;
+
+    // lead is how much the top ghost beats 2nd place
+    const lead = Math.max(0, bestScore - secondScore);
+
+    // more info = more confidence ceiling
+    const infoBoost = Math.min(1, count / 8); // ramps up as you add more
+
+    // base confidence from lead, scaled
+    let pct = Math.min(100, (lead * 6)); // lead of ~10 -> ~60%
+    pct = pct * (0.45 + 0.55 * infoBoost); // doesn’t get too high with little info
+    pct = Math.round(Math.min(100, Math.max(5, pct))); // minimum 5% once you start clicking
+
+    return pct;
+  }
+
+  // Flexible scoring
   function scoreGhost(g){
     let score = 0;
     const whyGood = [];
     const whyBad = [];
 
-    // Evidence
+    // Evidence: strong
     for (const ev of EVIDENCE){
       const v = state.evidence[ev];
       if (v === null) continue;
@@ -538,63 +566,76 @@
       if (v === true){
         if (has){ score += 10; whyGood.push(`matches evidence: ${ev}`); }
         else { score -= 18; whyBad.push(`doesn’t fit evidence: ${ev}`); }
-      } else { // v === false
+      } else {
         if (has){ score -= 10; whyBad.push(`you marked NO: ${ev}`); }
         else { score += 2; }
       }
     }
 
-    // Clues
+    // Clues: medium
     for (const ck of Object.keys(state.clues)){
       const v = state.clues[ck];
       if (v === null) continue;
 
-      const ghostTrait = g.traits?.[ck]; // true/false/undefined (unknown)
+      const ghostTrait = g.traits?.[ck]; // true/false/undefined
 
       if (v === true){
         if (ghostTrait === true){ score += 5; whyGood.push(`matches clue: ${labelForClue(ck)}`); }
         else if (ghostTrait === false){ score -= 10; whyBad.push(`contradicts clue: ${labelForClue(ck)}`); }
-      } else { // v === false
+      } else {
         if (ghostTrait === true){ score -= 4; whyBad.push(`you marked NO: ${labelForClue(ck)}`); }
         else if (ghostTrait === false){ score += 1; }
       }
     }
 
-    // tiny bonus if you provided more info (so it feels “confident” when you click more)
-    const infoCount =
-      Object.values(state.evidence).filter(v => v !== null).length +
-      Object.values(state.clues).filter(v => v !== null).length;
-    score += Math.min(6, Math.floor(infoCount / 3));
-
+    // small boost for entering more info
+    score += Math.min(6, Math.floor(inputsCount() / 3));
     return { score, whyGood, whyBad };
   }
 
-  function clamp(n,min,max){ return Math.max(min, Math.min(max, n)); }
-
   function render(){
-    // Rank
+    const count = inputsCount();
+
+    // If nothing selected, show empty state and hide rankings
+    if (count === 0){
+      topPickEl.innerHTML = `
+        <div class="topRow">
+          <div>
+            <div class="most">Most likely</div>
+            <h3 class="ghostName">—</h3>
+            <div class="emptyState">
+              Pick at least one evidence or behavior clue to get a guess.
+              <div style="margin-top:8px; color: rgba(255,255,255,.55); font-size:12px;">
+                Example: set “Left footprints in salt” to <b>No</b> → Wraith.
+              </div>
+            </div>
+          </div>
+          <div class="scoreBox">
+            <div class="most">Confidence</div>
+            <p class="scoreNum">0%</p>
+            <div class="bar"><div style="width:0%;"></div></div>
+            <div class="small" style="margin-top:8px; color:rgba(255,255,255,.62);">
+              Starts at 0% until you pick something
+            </div>
+          </div>
+        </div>
+      `;
+      rankListEl.innerHTML = "";
+      return;
+    }
+
+    // Rank ghosts
     const ranked = ghosts
       .map(g => ({ g, ...scoreGhost(g) }))
       .sort((a,b) => b.score - a.score);
 
     const best = ranked[0];
 
-    // Top pick display
-    topPickEl.innerHTML = "";
-    if (!best){
-      topPickEl.innerHTML = `<div class="most">Most likely</div><div class="ghostName">—</div>`;
-      return;
-    }
-
-    // Normalize score into a 0–100 bar (just for visuals)
-    const scores = ranked.map(x => x.score);
-    const minS = Math.min(...scores);
-    const maxS = Math.max(...scores);
-    const pct = (maxS === minS) ? 60 : clamp(((best.score - minS) / (maxS - minS)) * 100, 0, 100);
+    const pct = confidencePercent(ranked);
 
     const whyLine =
       (best.whyGood.slice(0,3).join(" • ")) ||
-      "Click evidence or clues to get a best guess.";
+      "Keep clicking clues to increase accuracy.";
 
     topPickEl.innerHTML = `
       <div class="topRow">
@@ -607,19 +648,19 @@
           <div class="whyBox">${whyLine}</div>
         </div>
         <div class="scoreBox">
-          <div class="most">Confidence score</div>
-          <p class="scoreNum">${best.score}</p>
+          <div class="most">Confidence</div>
+          <p class="scoreNum">${pct}%</p>
           <div class="bar"><div style="width:${pct}%;"></div></div>
           <div class="small" style="margin-top:8px; color:rgba(255,255,255,.62);">
-            Higher = more matches, fewer contradictions
+            More matches + fewer contradictions = higher %
           </div>
         </div>
       </div>
     `;
 
-    // List display
+    // Show ranked list (top 12)
     rankListEl.innerHTML = "";
-    ranked.forEach((x, idx) => {
+    ranked.slice(0, 12).forEach((x, idx) => {
       const hint =
         x.whyBad.length ? `⚠ ${x.whyBad[0]}` :
         x.whyGood.length ? `✓ ${x.whyGood[0]}` :
@@ -663,8 +704,6 @@
     resetBtn.onclick = () => {
       for (const ev of EVIDENCE) state.evidence[ev] = null;
       for (const c of CLUES) state.clues[c.key] = null;
-
-      // re-paint the pick buttons by rebuilding them
       init();
       render();
     };
