@@ -1,227 +1,678 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
-<meta charset="utf-8">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Blair Ghost Tracker</title>
 
 <style>
-body {
-  font-family: Arial, sans-serif;
-  padding: 16px;
-  max-width: 1100px;
-  margin: auto;
-}
+  :root{
+    --bg1:#070A12;
+    --bg2:#0B1220;
+    --card: rgba(255,255,255,.06);
+    --card2: rgba(255,255,255,.08);
+    --stroke: rgba(255,255,255,.10);
+    --text: rgba(255,255,255,.92);
+    --muted: rgba(255,255,255,.65);
+    --muted2: rgba(255,255,255,.50);
+    --accent: #7C3AED; /* purple */
+    --accent2:#22C55E; /* green */
+    --accent3:#06B6D4; /* cyan */
+    --danger:#EF4444;
+    --shadow: 0 18px 60px rgba(0,0,0,.55);
+    --radius: 18px;
+  }
 
-h1 { margin-bottom: 6px; }
-.small { font-size: 12px; color: #555; }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    color:var(--text);
+    background:
+      radial-gradient(1000px 550px at 15% 10%, rgba(124,58,237,.25), transparent 60%),
+      radial-gradient(900px 500px at 85% 20%, rgba(6,182,212,.18), transparent 60%),
+      radial-gradient(900px 550px at 60% 95%, rgba(34,197,94,.12), transparent 60%),
+      linear-gradient(180deg, var(--bg1), var(--bg2));
+    min-height:100vh;
+    padding:22px;
+  }
 
-.row {
-  display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-}
+  .wrap{max-width:1180px; margin:0 auto;}
+  .header{
+    display:flex; justify-content:space-between; align-items:flex-end; gap:16px; flex-wrap:wrap;
+    margin-bottom:14px;
+  }
+  .title{
+    display:flex; flex-direction:column; gap:6px;
+  }
+  h1{
+    margin:0;
+    font-size:26px;
+    letter-spacing:.2px;
+  }
+  .sub{
+    margin:0;
+    color:var(--muted);
+    font-size:13px;
+    line-height:1.35;
+  }
+  .pillTop{
+    display:flex; gap:8px; flex-wrap:wrap; align-items:center;
+  }
+  .tag{
+    font-size:12px;
+    padding:6px 10px;
+    border:1px solid var(--stroke);
+    background: rgba(255,255,255,.04);
+    border-radius:999px;
+    color:var(--muted);
+  }
+  .tag strong{color:var(--text); font-weight:700;}
 
-.card {
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  padding: 12px;
-  background: white;
-}
+  .grid{
+    display:grid;
+    grid-template-columns: 440px 1fr;
+    gap:16px;
+    align-items:start;
+  }
+  @media (max-width: 980px){
+    .grid{grid-template-columns:1fr;}
+  }
 
-.left { width: 360px; }
-.right { flex: 1; min-width: 320px; }
+  .card{
+    border:1px solid var(--stroke);
+    background: linear-gradient(180deg, var(--card), rgba(255,255,255,.04));
+    border-radius:var(--radius);
+    box-shadow: var(--shadow);
+    overflow:hidden;
+  }
+  .cardHead{
+    padding:14px 14px 10px 14px;
+    border-bottom:1px solid var(--stroke);
+    display:flex; justify-content:space-between; align-items:center; gap:10px;
+    background: rgba(255,255,255,.03);
+  }
+  .cardHead h2{
+    margin:0;
+    font-size:13px;
+    letter-spacing:.6px;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  .btn{
+    cursor:pointer;
+    border:1px solid var(--stroke);
+    background: rgba(255,255,255,.04);
+    color:var(--text);
+    padding:9px 12px;
+    border-radius:12px;
+    transition: transform .06s ease, border-color .12s ease, background .12s ease;
+    user-select:none;
+  }
+  .btn:hover{ background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.18); }
+  .btn:active{ transform: translateY(1px); }
+  .btnSmall{
+    padding:7px 10px;
+    font-size:12px;
+    border-radius:11px;
+    color:var(--muted);
+  }
 
-button {
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  padding: 8px 10px;
-  margin: 6px 6px 0 0;
-  background: white;
-  cursor: pointer;
-}
+  .pad{padding:14px;}
+  .section{
+    margin-top:10px;
+  }
+  .sectionTitle{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    margin:8px 0 8px;
+  }
+  .sectionTitle .label{
+    font-size:13px;
+    color:var(--text);
+    font-weight:700;
+  }
+  .hint{
+    font-size:12px;
+    color:var(--muted2);
+  }
 
-button.on { background: #e9f5ff; }
+  .btnGrid{
+    display:flex; flex-wrap:wrap; gap:8px;
+  }
+  .pick{
+    border:1px solid var(--stroke);
+    background: rgba(255,255,255,.04);
+    padding:8px 10px;
+    border-radius:14px;
+    font-size:12px;
+    color:var(--text);
+    display:flex; align-items:center; gap:8px;
+    transition: background .12s ease, border-color .12s ease;
+  }
+  .pick .dot{
+    width:8px; height:8px; border-radius:999px;
+    background: rgba(255,255,255,.35);
+    box-shadow: 0 0 0 3px rgba(255,255,255,.06);
+  }
+  .pick.onYes{
+    border-color: rgba(34,197,94,.50);
+    background: rgba(34,197,94,.10);
+  }
+  .pick.onYes .dot{ background: rgba(34,197,94,.95); box-shadow: 0 0 0 3px rgba(34,197,94,.18); }
 
-.section { margin-top: 12px; font-weight: bold; }
+  .pick.onNo{
+    border-color: rgba(239,68,68,.55);
+    background: rgba(239,68,68,.10);
+  }
+  .pick.onNo .dot{ background: rgba(239,68,68,.95); box-shadow: 0 0 0 3px rgba(239,68,68,.18); }
 
-.ghost {
-  border-top: 1px solid #eee;
-  padding: 10px 0;
-}
+  .pick:hover{ border-color: rgba(255,255,255,.18); background: rgba(255,255,255,.06); }
+  .pick.onYes:hover{ border-color: rgba(34,197,94,.60); }
+  .pick.onNo:hover{ border-color: rgba(239,68,68,.65); }
 
-.pill {
-  display: inline-block;
-  padding: 3px 8px;
-  border: 1px solid #ddd;
-  border-radius: 999px;
-  margin: 4px 6px 0 0;
-  font-size: 12px;
-}
+  .legend{
+    display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; color:var(--muted);
+    font-size:12px;
+  }
+  .leg{
+    display:flex; align-items:center; gap:8px;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid var(--stroke);
+    background: rgba(255,255,255,.03);
+  }
+  .leg .dot{ width:8px; height:8px; border-radius:999px; }
+  .leg.y .dot{ background: rgba(34,197,94,.95); }
+  .leg.n .dot{ background: rgba(239,68,68,.95); }
+  .leg.u .dot{ background: rgba(255,255,255,.40); }
 
-.traitRow {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 8px;
-}
+  /* Right side */
+  .topPick{
+    padding:16px;
+    background:
+      radial-gradient(650px 240px at 25% 0%, rgba(124,58,237,.22), transparent 60%),
+      radial-gradient(650px 240px at 85% 10%, rgba(6,182,212,.18), transparent 60%),
+      linear-gradient(180deg, var(--card2), rgba(255,255,255,.04));
+    border-bottom:1px solid var(--stroke);
+  }
+  .topRow{
+    display:flex; justify-content:space-between; gap:14px; align-items:flex-start; flex-wrap:wrap;
+  }
+  .most{
+    font-size:12px;
+    color:var(--muted);
+    letter-spacing:.6px;
+    text-transform:uppercase;
+    margin-bottom:6px;
+  }
+  .ghostName{
+    font-size:24px;
+    font-weight:900;
+    letter-spacing:.2px;
+    margin:0;
+  }
+  .scoreBox{
+    min-width:200px;
+    border:1px solid var(--stroke);
+    background: rgba(255,255,255,.04);
+    border-radius:14px;
+    padding:10px 12px;
+  }
+  .scoreNum{
+    font-size:22px;
+    font-weight:900;
+    margin:0;
+  }
+  .bar{
+    height:8px;
+    background: rgba(255,255,255,.10);
+    border-radius:999px;
+    overflow:hidden;
+    margin-top:8px;
+  }
+  .bar > div{
+    height:100%;
+    width:0%;
+    background: linear-gradient(90deg, var(--accent), var(--accent3));
+  }
 
-select {
-  width: 140px;
-  padding: 6px;
-  border-radius: 10px;
-}
+  .evWrap{ margin-top:10px; display:flex; flex-wrap:wrap; gap:8px; }
+  .ev{
+    font-size:12px;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid var(--stroke);
+    background: rgba(255,255,255,.04);
+    color:var(--muted);
+  }
+  .ev strong{ color: var(--text); }
+  .whyBox{
+    margin-top:10px;
+    color:var(--muted);
+    font-size:12px;
+    line-height:1.45;
+  }
+
+  .rankList{ padding:0; }
+  .item{
+    padding:14px;
+    border-top:1px solid var(--stroke);
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    align-items:flex-start;
+  }
+  .itemLeft{ display:flex; flex-direction:column; gap:6px; }
+  .itemName{ font-weight:900; margin:0; }
+  .itemEvs{ display:flex; flex-wrap:wrap; gap:6px; }
+  .chip{
+    font-size:11px;
+    padding:5px 9px;
+    border-radius:999px;
+    border:1px solid var(--stroke);
+    background: rgba(255,255,255,.03);
+    color:var(--muted);
+  }
+  .itemRight{
+    text-align:right;
+    min-width:120px;
+  }
+  .miniScore{
+    font-weight:900;
+    font-size:14px;
+    margin:0;
+  }
+  .miniHint{
+    font-size:11px;
+    color:var(--muted2);
+    margin-top:4px;
+  }
+
+  .footerNote{
+    padding:12px 14px;
+    border-top:1px solid var(--stroke);
+    color:var(--muted2);
+    font-size:12px;
+    background: rgba(255,255,255,.02);
+  }
+
+  .glow{
+    position:fixed;
+    inset:-200px;
+    pointer-events:none;
+    background:
+      radial-gradient(800px 350px at 20% 15%, rgba(124,58,237,.14), transparent 60%),
+      radial-gradient(900px 400px at 85% 35%, rgba(6,182,212,.10), transparent 60%);
+    filter: blur(10px);
+    opacity:.8;
+  }
 </style>
 </head>
 
 <body>
+<div class="glow"></div>
 
-<h1>Blair Ghost Tracker</h1>
-<div class="small">Select evidence + traits. Ghost list narrows automatically.</div>
-
-<div class="row">
-  <div class="card left">
-    <div class="section">✅ Found Evidence</div>
-    <div id="found"></div>
-
-    <div class="section">❌ Ruled Out Evidence</div>
-    <div id="ruled"></div>
-
-    <div class="section">🧠 Behavior Clues</div>
-    <div id="traits"></div>
-
-    <div style="margin-top:12px;">
-      <button onclick="resetAll()">Reset</button>
+<div class="wrap">
+  <div class="header">
+    <div class="title">
+      <h1>Blair Ghost Tracker</h1>
+      <p class="sub">Click what you’ve seen. It ranks the most likely ghost even if you only have a little info.</p>
+    </div>
+    <div class="pillTop">
+      <div class="tag"><strong>Tip:</strong> Salt footprints = <strong>No</strong> → Wraith</div>
+      <div class="tag"><strong>Tip:</strong> Parabolic screech = <strong>Yes</strong> → Banshee</div>
     </div>
   </div>
 
-  <div class="card right">
-    <div id="summary" class="small"></div>
-    <div id="results"></div>
+  <div class="grid">
+    <!-- LEFT: PICKERS -->
+    <div class="card">
+      <div class="cardHead">
+        <h2>Your Observations</h2>
+        <button class="btn btnSmall" id="resetBtn">Reset</button>
+      </div>
+
+      <div class="pad">
+        <div class="section">
+          <div class="sectionTitle">
+            <div class="label">Evidence</div>
+            <div class="hint">Tap once = Yes, tap twice = No, tap again = Unknown</div>
+          </div>
+          <div class="btnGrid" id="evidenceGrid"></div>
+        </div>
+
+        <div class="section">
+          <div class="sectionTitle">
+            <div class="label">Behavior clues</div>
+            <div class="hint">Same tap cycle as evidence</div>
+          </div>
+          <div class="btnGrid" id="clueGrid"></div>
+
+          <div class="legend">
+            <div class="leg y"><span class="dot"></span> Yes</div>
+            <div class="leg n"><span class="dot"></span> No</div>
+            <div class="leg u"><span class="dot"></span> Unknown</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: RESULTS -->
+    <div class="card">
+      <div class="topPick" id="topPick"></div>
+      <div class="rankList" id="rankList"></div>
+      <div class="footerNote">
+        This is “most likely,” not perfect proof. If you’re unsure about a clue, leave it Unknown.
+      </div>
+    </div>
   </div>
 </div>
 
 <script>
-const allEvidence = [
-  "EMF Level 5",
-  "Freezing Evidence",
-  "Book Evidence",
-  "UV Handprint",
-  "Ghost Orbs",
-  "Spirit Box",
-  "SLS Anomaly"
-];
+  // ---------------- EVIDENCE + CLUES ----------------
+  const EVIDENCE = [
+    "EMF Level 5",
+    "Freezing Evidence",
+    "Book Evidence",
+    "UV Handprint",
+    "Ghost Orbs",
+    "Spirit Box",
+    "SLS Anomaly"
+  ];
 
-const traitLabels = {
-  saltFootprints: "Ghost stepped in salt",
-  targetsOnePlayer: "Targets only one player",
-  bansheeScreech: "Banshee screech (parabolic)",
-  crucifixRangeLong: "Crucifix worked far away",
-  earlyHuntAnySanity: "Hunted at high / any sanity",
-  fasterWhenSeesPlayer: "Slow → FAST when it sees you",
-  blindHunt: "Blind during hunts",
-  changesFavoriteRoom: "Changes favorite room",
-  attractedToItems: "Moves to room with most items",
-  fakeSounds: "Mimics equipment sounds",
-  fakeHuntEnd: "Faked hunt ending"
-};
+  const CLUES = [
+    { key:"saltFootprints", label:"Left footprints in salt" },
+    { key:"targetsOnePlayer", label:"Targets only one player" },
+    { key:"bansheeScreech", label:"Parabolic: Banshee screech" },
+    { key:"demonRoar", label:"Parabolic: Demon roar" },
+    { key:"crucifixRangeLong", label:"Crucifix worked from far away" },
+    { key:"earlyHuntAnySanity", label:"Hunted at high / any sanity" },
+    { key:"fasterWhenSeesPlayer", label:"Slow → FAST when it sees you" },
+    { key:"blindHunt", label:"Blind during hunts (movement-based)" },
+    { key:"changesFavoriteRoom", label:"Changes favorite room a lot" },
+    { key:"attractedToItems", label:"Moves to room with most items" },
+    { key:"fakeSounds", label:"Mimics equipment sounds" },
+    { key:"fakeHuntEnd", label:"Faked hunt ending / went silent" }
+  ];
 
-const ghosts = [
-  { name:"Banshee", evidence:["EMF Level 5","Freezing Evidence","SLS Anomaly"], traits:{targetsOnePlayer:true,bansheeScreech:true} },
-  { name:"Demon", evidence:["Freezing Evidence","Book Evidence","Spirit Box"], traits:{earlyHuntAnySanity:true,crucifixRangeLong:true} },
-  { name:"Faejkur", evidence:["EMF Level 5","Freezing Evidence","Book Evidence"], traits:{fakeSounds:true} },
-  { name:"Harrow", evidence:["Book Evidence","Ghost Orbs","SLS Anomaly"], traits:{} },
-  { name:"Krasue", evidence:["EMF Level 5","Freezing Evidence","UV Handprint"], traits:{} },
-  { name:"Lament", evidence:["EMF Level 5","Ghost Orbs","Spirit Box"], traits:{fakeHuntEnd:true} },
-  { name:"Mare", evidence:["Freezing Evidence","Spirit Box","SLS Anomaly"], traits:{} },
-  { name:"Nook", evidence:["EMF Level 5","Freezing Evidence","Ghost Orbs"], traits:{changesFavoriteRoom:true,attractedToItems:true} },
-  { name:"Poltergeist", evidence:["UV Handprint","Ghost Orbs","Spirit Box"], traits:{} },
-  { name:"Revenant", evidence:["EMF Level 5","Book Evidence","UV Handprint"], traits:{fasterWhenSeesPlayer:true} },
-  { name:"Shade", evidence:["EMF Level 5","Book Evidence","SLS Anomaly"], traits:{} },
-  { name:"Spirit", evidence:["Book Evidence","UV Handprint","Spirit Box"], traits:{} },
-  { name:"Strigoi", evidence:["EMF Level 5","UV Handprint","Ghost Orbs"], traits:{} },
-  { name:"Vuult", evidence:["EMF Level 5","Ghost Orbs","SLS Anomaly"], traits:{} },
-  { name:"Wraith", evidence:["Freezing Evidence","Ghost Orbs","SLS Anomaly"], traits:{saltFootprints:false} },
-  { name:"Yama", evidence:["Book Evidence","Spirit Box","SLS Anomaly"], traits:{changesFavoriteRoom:true} },
-  { name:"Yurei", evidence:["Freezing Evidence","UV Handprint","Spirit Box"], traits:{blindHunt:true} },
-  { name:"ZoZo", evidence:["EMF Level 5","UV Handprint","Spirit Box"], traits:{} }
-];
+  // ---------------- GHOST DATABASE ----------------
+  // Evidence from your Blair table, traits from what you pasted.
+  // NOTE: Unknown traits are simply not included (so you don’t get punished).
+  const ghosts = [
+    { name:"Banshee",
+      evidence:["EMF Level 5","Freezing Evidence","SLS Anomaly"],
+      traits:{ targetsOnePlayer:true, bansheeScreech:true, saltFootprints:true }
+    },
+    { name:"Demon",
+      evidence:["Freezing Evidence","Book Evidence","Spirit Box"],
+      traits:{ earlyHuntAnySanity:true, crucifixRangeLong:true, demonRoar:true, saltFootprints:true }
+    },
+    { name:"Faejkur",
+      evidence:["EMF Level 5","Freezing Evidence","Book Evidence"],
+      traits:{ fakeSounds:true, saltFootprints:true }
+    },
+    { name:"Harrow",
+      evidence:["Book Evidence","Ghost Orbs","SLS Anomaly"],
+      traits:{ saltFootprints:true }
+    },
+    { name:"Krasue",
+      evidence:["EMF Level 5","Freezing Evidence","UV Handprint"],
+      traits:{ saltFootprints:true }
+    },
+    { name:"Lament",
+      evidence:["EMF Level 5","Ghost Orbs","Spirit Box"],
+      traits:{ fakeHuntEnd:true, saltFootprints:true }
+    },
+    { name:"Mare",
+      evidence:["Freezing Evidence","Spirit Box","SLS Anomaly"],
+      traits:{ saltFootprints:true }
+    },
+    { name:"Nook",
+      evidence:["EMF Level 5","Freezing Evidence","Ghost Orbs"],
+      traits:{ changesFavoriteRoom:true, attractedToItems:true, saltFootprints:true }
+    },
+    { name:"Poltergeist",
+      evidence:["UV Handprint","Ghost Orbs","Spirit Box"],
+      traits:{ saltFootprints:true }
+    },
+    { name:"Revenant",
+      evidence:["EMF Level 5","Book Evidence","UV Handprint"],
+      traits:{ fasterWhenSeesPlayer:true, saltFootprints:true }
+    },
+    { name:"Shade",
+      evidence:["EMF Level 5","Book Evidence","SLS Anomaly"],
+      traits:{ saltFootprints:true }
+    },
+    { name:"Spirit",
+      evidence:["Book Evidence","UV Handprint","Spirit Box"],
+      traits:{ saltFootprints:true }
+    },
+    { name:"Strigoi",
+      evidence:["EMF Level 5","UV Handprint","Ghost Orbs"],
+      traits:{ saltFootprints:true }
+    },
+    { name:"Vuult",
+      evidence:["EMF Level 5","Ghost Orbs","SLS Anomaly"],
+      traits:{ saltFootprints:true }
+    },
+    { name:"Wraith",
+      evidence:["Freezing Evidence","Ghost Orbs","SLS Anomaly"],
+      traits:{ saltFootprints:false } // never steps in salt
+    },
+    { name:"Yama",
+      evidence:["Book Evidence","Spirit Box","SLS Anomaly"],
+      traits:{ changesFavoriteRoom:true, saltFootprints:true }
+    },
+    { name:"Yurei",
+      evidence:["Freezing Evidence","UV Handprint","Spirit Box"],
+      traits:{ blindHunt:true, saltFootprints:true }
+    },
+    { name:"ZoZo",
+      evidence:["EMF Level 5","UV Handprint","Spirit Box"],
+      traits:{ saltFootprints:true }
+    }
+  ];
 
-const state = {
-  found: new Set(),
-  ruled: new Set(),
-  traits: Object.fromEntries(Object.keys(traitLabels).map(k => [k, null]))
-};
+  // ---------------- STATE (tri-state) ----------------
+  // tri-state: null = unknown, true = yes, false = no
+  const state = {
+    evidence: Object.fromEntries(EVIDENCE.map(e => [e, null])),
+    clues: Object.fromEntries(CLUES.map(c => [c.key, null]))
+  };
 
-function resetAll(){
-  state.found.clear();
-  state.ruled.clear();
-  for (let k in state.traits) state.traits[k] = null;
-  render();
-}
+  const evidenceGrid = document.getElementById("evidenceGrid");
+  const clueGrid = document.getElementById("clueGrid");
+  const topPickEl = document.getElementById("topPick");
+  const rankListEl = document.getElementById("rankList");
+  const resetBtn = document.getElementById("resetBtn");
 
-function toggleEvidence(type, ev){
-  if (type==="found") state.ruled.delete(ev);
-  if (type==="ruled") state.found.delete(ev);
-  state[type].has(ev) ? state[type].delete(ev) : state[type].add(ev);
-  render();
-}
-
-function matches(g){
-  for (let ev of state.found) if (!g.evidence.includes(ev)) return false;
-  for (let ev of state.ruled) if (g.evidence.includes(ev)) return false;
-  for (let t in state.traits){
-    if (state.traits[t] !== null && g.traits[t] !== state.traits[t]) return false;
+  function cycleTri(current){
+    // Unknown -> Yes -> No -> Unknown
+    if (current === null) return true;
+    if (current === true) return false;
+    return null;
   }
-  return true;
-}
 
-function render(){
-  document.getElementById("found").innerHTML = "";
-  document.getElementById("ruled").innerHTML = "";
-  document.getElementById("traits").innerHTML = "";
+  function makePick(label, getVal, setVal){
+    const b = document.createElement("button");
+    b.className = "pick";
+    const dot = document.createElement("span");
+    dot.className = "dot";
+    const text = document.createElement("span");
+    text.textContent = label;
+    b.appendChild(dot);
+    b.appendChild(text);
 
-  allEvidence.forEach(ev=>{
-    let b=document.createElement("button");
-    b.textContent=ev;
-    if(state.found.has(ev)) b.classList.add("on");
-    b.onclick=()=>toggleEvidence("found",ev);
-    found.appendChild(b);
+    function paint(){
+      b.classList.remove("onYes","onNo");
+      const v = getVal();
+      if (v === true) b.classList.add("onYes");
+      if (v === false) b.classList.add("onNo");
+    }
 
-    let r=document.createElement("button");
-    r.textContent=ev;
-    if(state.ruled.has(ev)) r.classList.add("on");
-    r.onclick=()=>toggleEvidence("ruled",ev);
-    ruled.appendChild(r);
-  });
+    b.onclick = () => { setVal(cycleTri(getVal())); paint(); render(); };
+    paint();
+    return b;
+  }
 
-  for (let t in traitLabels){
-    let row=document.createElement("div");
-    row.className="traitRow";
-    row.innerHTML=`<div>${traitLabels[t]}</div>`;
-    let s=document.createElement("select");
-    ["Unknown","Yes","No"].forEach(v=>{
-      let o=document.createElement("option");
-      o.textContent=v; s.appendChild(o);
+  function labelForClue(key){
+    return (CLUES.find(c => c.key === key)?.label) || key;
+  }
+
+  // ---------------- SCORING (flexible, “most likely”) ----------------
+  // Evidence is stronger than clues.
+  // Unknown = no effect.
+  // Contradictions lower score; matches raise score.
+  function scoreGhost(g){
+    let score = 0;
+    const whyGood = [];
+    const whyBad = [];
+
+    // Evidence
+    for (const ev of EVIDENCE){
+      const v = state.evidence[ev];
+      if (v === null) continue;
+
+      const has = g.evidence.includes(ev);
+
+      if (v === true){
+        if (has){ score += 10; whyGood.push(`matches evidence: ${ev}`); }
+        else { score -= 18; whyBad.push(`doesn’t fit evidence: ${ev}`); }
+      } else { // v === false
+        if (has){ score -= 10; whyBad.push(`you marked NO: ${ev}`); }
+        else { score += 2; }
+      }
+    }
+
+    // Clues
+    for (const ck of Object.keys(state.clues)){
+      const v = state.clues[ck];
+      if (v === null) continue;
+
+      const ghostTrait = g.traits?.[ck]; // true/false/undefined (unknown)
+
+      if (v === true){
+        if (ghostTrait === true){ score += 5; whyGood.push(`matches clue: ${labelForClue(ck)}`); }
+        else if (ghostTrait === false){ score -= 10; whyBad.push(`contradicts clue: ${labelForClue(ck)}`); }
+      } else { // v === false
+        if (ghostTrait === true){ score -= 4; whyBad.push(`you marked NO: ${labelForClue(ck)}`); }
+        else if (ghostTrait === false){ score += 1; }
+      }
+    }
+
+    // tiny bonus if you provided more info (so it feels “confident” when you click more)
+    const infoCount =
+      Object.values(state.evidence).filter(v => v !== null).length +
+      Object.values(state.clues).filter(v => v !== null).length;
+    score += Math.min(6, Math.floor(infoCount / 3));
+
+    return { score, whyGood, whyBad };
+  }
+
+  function clamp(n,min,max){ return Math.max(min, Math.min(max, n)); }
+
+  function render(){
+    // Rank
+    const ranked = ghosts
+      .map(g => ({ g, ...scoreGhost(g) }))
+      .sort((a,b) => b.score - a.score);
+
+    const best = ranked[0];
+
+    // Top pick display
+    topPickEl.innerHTML = "";
+    if (!best){
+      topPickEl.innerHTML = `<div class="most">Most likely</div><div class="ghostName">—</div>`;
+      return;
+    }
+
+    // Normalize score into a 0–100 bar (just for visuals)
+    const scores = ranked.map(x => x.score);
+    const minS = Math.min(...scores);
+    const maxS = Math.max(...scores);
+    const pct = (maxS === minS) ? 60 : clamp(((best.score - minS) / (maxS - minS)) * 100, 0, 100);
+
+    const whyLine =
+      (best.whyGood.slice(0,3).join(" • ")) ||
+      "Click evidence or clues to get a best guess.";
+
+    topPickEl.innerHTML = `
+      <div class="topRow">
+        <div>
+          <div class="most">Most likely</div>
+          <h3 class="ghostName">${best.g.name}</h3>
+          <div class="evWrap">
+            ${best.g.evidence.map(e => `<span class="ev"><strong>${e}</strong></span>`).join("")}
+          </div>
+          <div class="whyBox">${whyLine}</div>
+        </div>
+        <div class="scoreBox">
+          <div class="most">Confidence score</div>
+          <p class="scoreNum">${best.score}</p>
+          <div class="bar"><div style="width:${pct}%;"></div></div>
+          <div class="small" style="margin-top:8px; color:rgba(255,255,255,.62);">
+            Higher = more matches, fewer contradictions
+          </div>
+        </div>
+      </div>
+    `;
+
+    // List display
+    rankListEl.innerHTML = "";
+    ranked.forEach((x, idx) => {
+      const hint =
+        x.whyBad.length ? `⚠ ${x.whyBad[0]}` :
+        x.whyGood.length ? `✓ ${x.whyGood[0]}` :
+        "No conflicts yet";
+
+      const row = document.createElement("div");
+      row.className = "item";
+      row.innerHTML = `
+        <div class="itemLeft">
+          <div class="itemName">${idx === 0 ? "👑 " : ""}${x.g.name}</div>
+          <div class="itemEvs">${x.g.evidence.map(e => `<span class="chip">${e}</span>`).join("")}</div>
+        </div>
+        <div class="itemRight">
+          <div class="miniScore">${x.score}</div>
+          <div class="miniHint">${hint}</div>
+        </div>
+      `;
+      rankListEl.appendChild(row);
     });
-    s.value = state.traits[t]===null?"Unknown":state.traits[t]?"Yes":"No";
-    s.onchange=()=>state.traits[t]=s.value==="Unknown"?null:s.value==="Yes";
-    row.appendChild(s);
-    traits.appendChild(row);
   }
 
-  let list=ghosts.filter(matches);
-  summary.textContent=list.length+" possible ghosts";
-  results.innerHTML="";
-  list.forEach(g=>{
-    let d=document.createElement("div");
-    d.className="ghost";
-    d.innerHTML=`<strong>${g.name}</strong><br>${g.evidence.map(e=>`<span class="pill">${e}</span>`).join("")}`;
-    results.appendChild(d);
-  });
-}
+  function init(){
+    evidenceGrid.innerHTML = "";
+    EVIDENCE.forEach(ev => {
+      evidenceGrid.appendChild(makePick(
+        ev,
+        () => state.evidence[ev],
+        (v) => state.evidence[ev] = v
+      ));
+    });
 
-render();
+    clueGrid.innerHTML = "";
+    CLUES.forEach(c => {
+      clueGrid.appendChild(makePick(
+        c.label,
+        () => state.clues[c.key],
+        (v) => state.clues[c.key] = v
+      ));
+    });
+
+    resetBtn.onclick = () => {
+      for (const ev of EVIDENCE) state.evidence[ev] = null;
+      for (const c of CLUES) state.clues[c.key] = null;
+
+      // re-paint the pick buttons by rebuilding them
+      init();
+      render();
+    };
+
+    render();
+  }
+
+  init();
 </script>
-
 </body>
-
 </html>
