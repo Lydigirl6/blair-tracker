@@ -1,0 +1,227 @@
+
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Blair Ghost Tracker</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  padding: 16px;
+  max-width: 1100px;
+  margin: auto;
+}
+
+h1 { margin-bottom: 6px; }
+.small { font-size: 12px; color: #555; }
+
+.row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.card {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 12px;
+  background: white;
+}
+
+.left { width: 360px; }
+.right { flex: 1; min-width: 320px; }
+
+button {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 8px 10px;
+  margin: 6px 6px 0 0;
+  background: white;
+  cursor: pointer;
+}
+
+button.on { background: #e9f5ff; }
+
+.section { margin-top: 12px; font-weight: bold; }
+
+.ghost {
+  border-top: 1px solid #eee;
+  padding: 10px 0;
+}
+
+.pill {
+  display: inline-block;
+  padding: 3px 8px;
+  border: 1px solid #ddd;
+  border-radius: 999px;
+  margin: 4px 6px 0 0;
+  font-size: 12px;
+}
+
+.traitRow {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+
+select {
+  width: 140px;
+  padding: 6px;
+  border-radius: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Blair Ghost Tracker</h1>
+<div class="small">Select evidence + traits. Ghost list narrows automatically.</div>
+
+<div class="row">
+  <div class="card left">
+    <div class="section">✅ Found Evidence</div>
+    <div id="found"></div>
+
+    <div class="section">❌ Ruled Out Evidence</div>
+    <div id="ruled"></div>
+
+    <div class="section">🧠 Behavior Clues</div>
+    <div id="traits"></div>
+
+    <div style="margin-top:12px;">
+      <button onclick="resetAll()">Reset</button>
+    </div>
+  </div>
+
+  <div class="card right">
+    <div id="summary" class="small"></div>
+    <div id="results"></div>
+  </div>
+</div>
+
+<script>
+const allEvidence = [
+  "EMF Level 5",
+  "Freezing Evidence",
+  "Book Evidence",
+  "UV Handprint",
+  "Ghost Orbs",
+  "Spirit Box",
+  "SLS Anomaly"
+];
+
+const traitLabels = {
+  saltFootprints: "Ghost stepped in salt",
+  targetsOnePlayer: "Targets only one player",
+  bansheeScreech: "Banshee screech (parabolic)",
+  crucifixRangeLong: "Crucifix worked far away",
+  earlyHuntAnySanity: "Hunted at high / any sanity",
+  fasterWhenSeesPlayer: "Slow → FAST when it sees you",
+  blindHunt: "Blind during hunts",
+  changesFavoriteRoom: "Changes favorite room",
+  attractedToItems: "Moves to room with most items",
+  fakeSounds: "Mimics equipment sounds",
+  fakeHuntEnd: "Faked hunt ending"
+};
+
+const ghosts = [
+  { name:"Banshee", evidence:["EMF Level 5","Freezing Evidence","SLS Anomaly"], traits:{targetsOnePlayer:true,bansheeScreech:true} },
+  { name:"Demon", evidence:["Freezing Evidence","Book Evidence","Spirit Box"], traits:{earlyHuntAnySanity:true,crucifixRangeLong:true} },
+  { name:"Faejkur", evidence:["EMF Level 5","Freezing Evidence","Book Evidence"], traits:{fakeSounds:true} },
+  { name:"Harrow", evidence:["Book Evidence","Ghost Orbs","SLS Anomaly"], traits:{} },
+  { name:"Krasue", evidence:["EMF Level 5","Freezing Evidence","UV Handprint"], traits:{} },
+  { name:"Lament", evidence:["EMF Level 5","Ghost Orbs","Spirit Box"], traits:{fakeHuntEnd:true} },
+  { name:"Mare", evidence:["Freezing Evidence","Spirit Box","SLS Anomaly"], traits:{} },
+  { name:"Nook", evidence:["EMF Level 5","Freezing Evidence","Ghost Orbs"], traits:{changesFavoriteRoom:true,attractedToItems:true} },
+  { name:"Poltergeist", evidence:["UV Handprint","Ghost Orbs","Spirit Box"], traits:{} },
+  { name:"Revenant", evidence:["EMF Level 5","Book Evidence","UV Handprint"], traits:{fasterWhenSeesPlayer:true} },
+  { name:"Shade", evidence:["EMF Level 5","Book Evidence","SLS Anomaly"], traits:{} },
+  { name:"Spirit", evidence:["Book Evidence","UV Handprint","Spirit Box"], traits:{} },
+  { name:"Strigoi", evidence:["EMF Level 5","UV Handprint","Ghost Orbs"], traits:{} },
+  { name:"Vuult", evidence:["EMF Level 5","Ghost Orbs","SLS Anomaly"], traits:{} },
+  { name:"Wraith", evidence:["Freezing Evidence","Ghost Orbs","SLS Anomaly"], traits:{saltFootprints:false} },
+  { name:"Yama", evidence:["Book Evidence","Spirit Box","SLS Anomaly"], traits:{changesFavoriteRoom:true} },
+  { name:"Yurei", evidence:["Freezing Evidence","UV Handprint","Spirit Box"], traits:{blindHunt:true} },
+  { name:"ZoZo", evidence:["EMF Level 5","UV Handprint","Spirit Box"], traits:{} }
+];
+
+const state = {
+  found: new Set(),
+  ruled: new Set(),
+  traits: Object.fromEntries(Object.keys(traitLabels).map(k => [k, null]))
+};
+
+function resetAll(){
+  state.found.clear();
+  state.ruled.clear();
+  for (let k in state.traits) state.traits[k] = null;
+  render();
+}
+
+function toggleEvidence(type, ev){
+  if (type==="found") state.ruled.delete(ev);
+  if (type==="ruled") state.found.delete(ev);
+  state[type].has(ev) ? state[type].delete(ev) : state[type].add(ev);
+  render();
+}
+
+function matches(g){
+  for (let ev of state.found) if (!g.evidence.includes(ev)) return false;
+  for (let ev of state.ruled) if (g.evidence.includes(ev)) return false;
+  for (let t in state.traits){
+    if (state.traits[t] !== null && g.traits[t] !== state.traits[t]) return false;
+  }
+  return true;
+}
+
+function render(){
+  document.getElementById("found").innerHTML = "";
+  document.getElementById("ruled").innerHTML = "";
+  document.getElementById("traits").innerHTML = "";
+
+  allEvidence.forEach(ev=>{
+    let b=document.createElement("button");
+    b.textContent=ev;
+    if(state.found.has(ev)) b.classList.add("on");
+    b.onclick=()=>toggleEvidence("found",ev);
+    found.appendChild(b);
+
+    let r=document.createElement("button");
+    r.textContent=ev;
+    if(state.ruled.has(ev)) r.classList.add("on");
+    r.onclick=()=>toggleEvidence("ruled",ev);
+    ruled.appendChild(r);
+  });
+
+  for (let t in traitLabels){
+    let row=document.createElement("div");
+    row.className="traitRow";
+    row.innerHTML=`<div>${traitLabels[t]}</div>`;
+    let s=document.createElement("select");
+    ["Unknown","Yes","No"].forEach(v=>{
+      let o=document.createElement("option");
+      o.textContent=v; s.appendChild(o);
+    });
+    s.value = state.traits[t]===null?"Unknown":state.traits[t]?"Yes":"No";
+    s.onchange=()=>state.traits[t]=s.value==="Unknown"?null:s.value==="Yes";
+    row.appendChild(s);
+    traits.appendChild(row);
+  }
+
+  let list=ghosts.filter(matches);
+  summary.textContent=list.length+" possible ghosts";
+  results.innerHTML="";
+  list.forEach(g=>{
+    let d=document.createElement("div");
+    d.className="ghost";
+    d.innerHTML=`<strong>${g.name}</strong><br>${g.evidence.map(e=>`<span class="pill">${e}</span>`).join("")}`;
+    results.appendChild(d);
+  });
+}
+
+render();
+</script>
+
+</body>
+</html>
