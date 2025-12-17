@@ -3,534 +3,369 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Blair Ghost Helper</title>
+  <title>Blair Ghost Tracker</title>
   <style>
     :root{
-      --bg0:#070713;
-      --bg1:#0b0b1f;
-      --card: rgba(255,255,255,0.06);
-      --card2: rgba(255,255,255,0.08);
-      --line: rgba(255,255,255,0.10);
-      --text: rgba(255,255,255,0.92);
-      --muted: rgba(255,255,255,0.65);
-      --muted2: rgba(255,255,255,0.50);
+      --bg0:#07060f;
+      --bg1:#0f0b1f;
+      --card:rgba(255,255,255,.08);
+      --card2:rgba(255,255,255,.06);
+      --stroke:rgba(255,255,255,.14);
+      --text:#f6f1ff;
+      --muted:rgba(246,241,255,.72);
 
-      /* NEW THEME: pink -> orange */
-      --a:#ff4fd8;
-      --b:#ff9a3d;
-      --good:#44ffb2;
-      --bad:#ff5a6a;
-      --warn:#ffd56a;
+      /* NEW THEME: pink + orange */
+      --a:#ff3ea5;   /* pink */
+      --b:#ff8a2b;   /* orange */
+      --good:#44ffb4;
+      --bad:#ff4d6d;
+      --warn:#ffd166;
 
-      --r: 18px;
-      --shadow: 0 22px 70px rgba(0,0,0,0.55);
-      --shadow2: 0 10px 30px rgba(0,0,0,0.35);
+      --shadow: 0 20px 60px rgba(0,0,0,.55);
+      --r:18px;
     }
 
     *{ box-sizing:border-box; }
     html,body{ height:100%; }
     body{
       margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
       color:var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
       background:
-        radial-gradient(1200px 700px at 15% 15%, rgba(255,79,216,0.18), transparent 60%),
-        radial-gradient(900px 600px at 85% 30%, rgba(255,154,61,0.16), transparent 60%),
-        radial-gradient(1000px 700px at 60% 90%, rgba(120,90,255,0.10), transparent 55%),
+        radial-gradient(1100px 700px at 15% 10%, rgba(255,62,165,.25), transparent 55%),
+        radial-gradient(900px 600px at 85% 15%, rgba(255,138,43,.23), transparent 55%),
+        radial-gradient(900px 700px at 55% 85%, rgba(255,62,165,.14), transparent 60%),
         linear-gradient(180deg, var(--bg0), var(--bg1));
       overflow-x:hidden;
     }
 
-    .wrap{
-      max-width: 1240px;
-      margin: 0 auto;
-      padding: 18px 16px 26px;
-    }
+    .wrap{ max-width:1180px; margin:0 auto; padding:22px 16px 44px; }
 
     header{
-      display:flex;
-      gap:14px;
-      align-items:flex-start;
-      justify-content:space-between;
-      flex-wrap:wrap;
-      margin-bottom: 12px;
+      display:flex; gap:14px; align-items:flex-start; justify-content:space-between;
+      margin-bottom:14px;
     }
 
     .title{
-      display:flex;
-      flex-direction:column;
-      gap:6px;
-      min-width: 260px;
+      display:flex; flex-direction:column; gap:6px;
     }
-
     h1{
       margin:0;
-      font-size: 28px;
-      letter-spacing: 0.2px;
-      line-height: 1.05;
+      font-size:34px;
+      letter-spacing:.2px;
+      line-height:1.08;
+      text-shadow: 0 10px 40px rgba(0,0,0,.55);
     }
-    .sub{
-      margin:0;
-      color: var(--muted);
-      font-size: 13px;
-      max-width: 560px;
+    .sub{ color:var(--muted); font-size:14px; }
+
+    .topRight{
+      display:flex; flex-direction:column; align-items:flex-end; gap:10px;
+      min-width:300px;
     }
 
-    .topbar{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      flex-wrap:wrap;
-      justify-content:flex-end;
-    }
-
-    .pill{
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.10);
-      border-radius: 999px;
-      padding: 8px 10px;
-      font-size: 12px;
-      color: var(--muted);
-      display:flex;
-      gap:8px;
-      align-items:center;
-      box-shadow: var(--shadow2);
+    .chipsRow{ display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+    .chip{
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
+      color:rgba(255,255,255,.9);
+      font-size:12px;
       backdrop-filter: blur(10px);
+      box-shadow: 0 10px 26px rgba(0,0,0,.25);
+      white-space:nowrap;
     }
-    .pill strong{ color: var(--text); font-weight: 650; }
-
-    select{
-      appearance:none;
-      -webkit-appearance:none;
-      -moz-appearance:none;
-      border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(255,255,255,0.06);
-      color: var(--text);
-      border-radius: 12px;
-      padding: 9px 34px 9px 10px;
-      font-size: 12px;
-      outline:none;
-      box-shadow: var(--shadow2);
-      position:relative;
-    }
-    .selectWrap{
-      position:relative;
-      display:inline-block;
-    }
-    .selectWrap:after{
-      content:"▾";
-      position:absolute;
-      right:10px;
-      top:50%;
-      transform:translateY(-50%);
-      color: var(--muted);
-      pointer-events:none;
-      font-size: 12px;
-    }
+    .chip b{ color:white; }
 
     .grid{
       display:grid;
-      grid-template-columns: 420px 1fr;
-      gap: 14px;
+      grid-template-columns: 390px 1fr;
+      gap:14px;
       align-items:start;
     }
-    @media (max-width: 980px){
-      .grid{ grid-template-columns: 1fr; }
-    }
 
-    .card{
-      background: var(--card);
-      border: 1px solid var(--line);
+    .panel{
+      border:1px solid var(--stroke);
       border-radius: var(--r);
+      background: linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.04));
       box-shadow: var(--shadow);
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(14px);
       overflow:hidden;
+      position:relative;
     }
-    .cardHead{
-      padding: 12px 12px;
-      border-bottom: 1px solid rgba(255,255,255,0.10);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      background: linear-gradient(90deg, rgba(255,79,216,0.10), rgba(255,154,61,0.08));
+    .panel::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: radial-gradient(600px 200px at 20% 0%, rgba(255,62,165,.20), transparent 60%),
+                  radial-gradient(600px 200px at 80% 0%, rgba(255,138,43,.18), transparent 60%);
+      pointer-events:none;
+      opacity:.7;
     }
-    .cardHead h2{
+
+    .panelHeader{
+      padding:14px 14px 12px;
+      display:flex; align-items:center; justify-content:space-between;
+      border-bottom:1px solid rgba(255,255,255,.10);
+      position:relative;
+    }
+    .panelHeader h2{
       margin:0;
-      font-size: 12px;
-      letter-spacing: 0.9px;
-      text-transform: uppercase;
-      color: var(--muted);
+      font-size:12px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:rgba(255,255,255,.78);
     }
+
     .btn{
-      border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(255,255,255,0.07);
-      color: var(--text);
-      border-radius: 12px;
-      padding: 7px 10px;
-      font-size: 12px;
+      border:1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(255,255,255,.11), rgba(255,255,255,.05));
+      color:rgba(255,255,255,.92);
+      border-radius:999px;
+      padding:8px 12px;
+      font-size:12px;
       cursor:pointer;
+      backdrop-filter: blur(10px);
+      transition: transform .12s ease, border-color .12s ease;
     }
-    .btn:hover{ background: rgba(255,255,255,0.10); }
+    .btn:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.25); }
+    .btn:active{ transform: translateY(0px); }
 
-    .body{
-      padding: 12px;
-    }
+    .content{ padding:14px; position:relative; }
 
-    .section{
-      margin-bottom: 14px;
-    }
+    .row{ display:flex; gap:10px; flex-wrap:wrap; }
+    .muted{ color:var(--muted); font-size:12px; }
+    .tiny{ font-size:11px; color:rgba(255,255,255,.68); }
+
     .sectionTitle{
-      display:flex;
-      align-items:baseline;
-      justify-content:space-between;
-      gap:10px;
-      margin-bottom: 8px;
-    }
-    .sectionTitle h3{
-      margin:0;
-      font-size: 13px;
-      color: var(--text);
-      letter-spacing: 0.2px;
-    }
-    .hint{
-      color: var(--muted2);
-      font-size: 11px;
+      margin:12px 0 8px;
+      font-size:12px;
+      color:rgba(255,255,255,.85);
+      display:flex; align-items:center; justify-content:space-between;
     }
 
-    .chips{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-    }
-
-    .chip{
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.06);
-      padding: 9px 10px;
-      border-radius: 14px;
+    /* tri-state pills */
+    .pill{
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.06);
+      padding:9px 10px;
+      border-radius: 12px;
+      font-size:12px;
       cursor:pointer;
       user-select:none;
-      display:flex;
-      gap:8px;
-      align-items:center;
-      font-size: 12px;
-      transition: transform 0.05s ease;
+      display:flex; align-items:center; gap:8px;
+      transition: transform .12s ease, border-color .12s ease, background .12s ease;
+      min-height:36px;
     }
-    .chip:active{ transform: scale(0.99); }
+    .pill:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.26); }
     .dot{
-      width: 10px; height: 10px; border-radius: 50%;
-      background: rgba(255,255,255,0.25);
-      box-shadow: 0 0 0 3px rgba(0,0,0,0.15) inset;
+      width:10px; height:10px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.35);
+      background: rgba(255,255,255,.08);
+      flex:0 0 auto;
     }
-    .stateU .dot{ background: rgba(255,255,255,0.25); }
-    .stateY .dot{ background: linear-gradient(90deg, var(--a), var(--b)); }
-    .stateN .dot{ background: rgba(255,90,106,0.9); }
-
-    .chip small{
-      color: var(--muted2);
-      font-size: 11px;
+    .pill[data-state="yes"]{
+      border-color: rgba(68,255,180,.45);
+      background: rgba(68,255,180,.10);
     }
+    .pill[data-state="yes"] .dot{ background: var(--good); border-color: rgba(0,0,0,.18); }
 
-    .rightCol{
+    .pill[data-state="no"]{
+      border-color: rgba(255,77,109,.45);
+      background: rgba(255,77,109,.10);
+    }
+    .pill[data-state="no"] .dot{ background: var(--bad); border-color: rgba(0,0,0,.18); }
+
+    .pill[data-state="maybe"]{
+      border-color: rgba(255,209,102,.45);
+      background: rgba(255,209,102,.10);
+    }
+    .pill[data-state="maybe"] .dot{ background: var(--warn); border-color: rgba(0,0,0,.18); }
+
+    /* main right area */
+    .rightTop{
       display:grid;
-      gap: 14px;
-      grid-template-columns: 1fr;
+      grid-template-columns: 1fr 320px;
+      gap:14px;
     }
 
-    .hero{
-      display:grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 12px;
-      align-items:stretch;
+    .bigTitle{
+      font-size:22px;
+      margin:0 0 8px;
+      letter-spacing:.2px;
     }
-    @media (max-width: 980px){
-      .hero{ grid-template-columns: 1fr; }
-    }
-
-    .most{
-      padding: 14px;
-      border-radius: var(--r);
-      border: 1px solid rgba(255,255,255,0.10);
-      background: linear-gradient(135deg, rgba(255,79,216,0.10), rgba(255,154,61,0.08));
-      box-shadow: var(--shadow2);
-    }
-    .mostTop{
-      display:flex;
-      gap:10px;
-      align-items:flex-start;
-      justify-content:space-between;
-      margin-bottom: 10px;
-    }
-    .mostName{
-      font-size: 22px;
+    .ghostName{
+      font-size:30px;
       margin:0;
-      line-height:1.1;
-    }
-    .mostSub{
-      margin: 6px 0 0;
-      color: var(--muted);
-      font-size: 12px;
-    }
-    .tags{
-      display:flex;
-      flex-wrap:wrap;
-      gap:6px;
-      margin-top: 10px;
-    }
-    .tag{
-      font-size: 11px;
-      color: var(--text);
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(0,0,0,0.18);
-      border-radius: 999px;
-      padding: 6px 10px;
+      line-height:1.05;
+      letter-spacing:.3px;
     }
 
-    .scoreBox{
-      padding: 14px;
-      border-radius: var(--r);
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.06);
-      box-shadow: var(--shadow2);
+    .badgeRow{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+    .badge{
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.16);
+      padding:7px 10px;
+      border-radius:999px;
+      font-size:12px;
+      color: rgba(255,255,255,.90);
     }
-    .scoreLabel{
-      font-size: 11px;
-      letter-spacing: 0.8px;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 8px;
+
+    .emptyState{
+      padding:24px 14px;
+      border:1px dashed rgba(255,255,255,.22);
+      border-radius: 14px;
+      background: rgba(255,255,255,.04);
+      color: rgba(255,255,255,.78);
+      line-height:1.35;
     }
-    .scoreRow{
-      display:flex;
-      align-items:baseline;
-      justify-content:space-between;
-      gap:10px;
-      margin-bottom: 8px;
+
+    .meterBox{
+      padding:14px;
     }
-    .bigPct{
-      font-size: 28px;
-      font-weight: 750;
-      letter-spacing: -0.5px;
+    .meterLabel{
+      display:flex; align-items:flex-end; justify-content:space-between;
+      margin-bottom:10px;
     }
-    .meter{
-      height: 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.10);
+    .meterLabel .cap{ font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.70); }
+    .meterLabel .val{ font-size:22px; font-weight:800; }
+    .bar{
+      height:10px; border-radius:999px;
+      background: rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.12);
       overflow:hidden;
-      border: 1px solid rgba(255,255,255,0.10);
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,.12);
     }
     .fill{
       height:100%;
       width:0%;
       background: linear-gradient(90deg, var(--a), var(--b));
-      border-radius: 999px;
-      transition: width 160ms ease;
+      border-radius:999px;
+      transition: width .22s ease;
     }
-    .meterNote{
-      margin-top: 8px;
-      color: var(--muted);
-      font-size: 12px;
+    .meterHint{
+      margin-top:10px;
+      color:rgba(255,255,255,.68);
+      font-size:12px;
     }
 
     .list{
-      border-radius: var(--r);
-      overflow:hidden;
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.05);
+      margin-top:14px;
+      border-top:1px solid rgba(255,255,255,.10);
+    }
+    .ghostRow{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:12px 14px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      gap:14px;
+    }
+    .ghostRow:hover{ background: rgba(255,255,255,.03); }
+    .leftInfo{ display:flex; flex-direction:column; gap:6px; min-width:0; }
+    .gTitle{ margin:0; font-size:16px; }
+    .gSub{ display:flex; gap:6px; flex-wrap:wrap; }
+    .scoreBox{
+      text-align:right;
+      min-width:120px;
+      color:rgba(255,255,255,.85);
+      font-size:12px;
+    }
+    .scoreBox b{ display:block; font-size:16px; color:white; }
+
+    /* forms */
+    .controls{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+    }
+    .field{
+      display:flex; flex-direction:column; gap:6px;
+      min-width: 150px;
+    }
+    label{ font-size:11px; letter-spacing:.10em; text-transform:uppercase; color:rgba(255,255,255,.70); }
+    select{
+      width:100%;
+      padding:10px 10px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.25);
+      color: rgba(255,255,255,.92);
+      outline:none;
+    }
+    /* FIX: dropdown options readable */
+    select option{
+      color:#111 !important;
+      background:#fff !important;
     }
 
-    .row{
-      padding: 12px;
-      display:grid;
-      grid-template-columns: 1fr auto;
-      gap: 10px;
-      align-items:center;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
+    .miniBtn{
+      border-radius:12px;
+      padding:10px 12px;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.07);
+      color: rgba(255,255,255,.92);
       cursor:pointer;
     }
-    .row:last-child{ border-bottom:none; }
-    .row:hover{ background: rgba(255,255,255,0.06); }
+    .miniBtn:hover{ border-color: rgba(255,255,255,.28); }
 
-    .rowLeft{
-      display:flex;
-      flex-direction:column;
-      gap: 6px;
-      min-width:0;
-    }
-    .rowName{
-      display:flex;
-      gap:8px;
-      align-items:center;
-      font-weight: 700;
-    }
-    .miniTags{
-      display:flex;
-      flex-wrap:wrap;
-      gap:6px;
-    }
-    .miniTag{
-      font-size: 11px;
-      color: var(--muted);
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(0,0,0,0.16);
-      border-radius: 999px;
-      padding: 5px 8px;
-    }
-    .rowRight{
-      text-align:right;
-      display:flex;
-      flex-direction:column;
-      gap:4px;
-      align-items:flex-end;
-    }
-    .rowPct{
-      font-weight: 800;
-      font-size: 14px;
-    }
-    .rowWhy{
-      color: var(--muted2);
-      font-size: 11px;
-      max-width: 240px;
-    }
-
-    .modalBackdrop{
-      position:fixed;
-      inset:0;
-      background: rgba(0,0,0,0.62);
+    /* modal */
+    .modalBack{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.55);
       display:none;
       align-items:center;
       justify-content:center;
-      padding: 16px;
-      z-index: 999;
+      padding:18px;
+      z-index:50;
     }
     .modal{
-      width:min(860px, 100%);
-      border-radius: 18px;
-      background:
-        radial-gradient(900px 600px at 25% 25%, rgba(255,79,216,0.18), transparent 55%),
-        radial-gradient(900px 600px at 75% 35%, rgba(255,154,61,0.14), transparent 60%),
-        rgba(12,12,26,0.96);
-      border: 1px solid rgba(255,255,255,0.14);
-      box-shadow: var(--shadow);
+      width:min(740px, 100%);
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.16);
+      background: linear-gradient(180deg, rgba(25,18,45,.92), rgba(12,10,20,.92));
+      box-shadow: 0 30px 90px rgba(0,0,0,.75);
       overflow:hidden;
-      backdrop-filter: blur(10px);
+      position:relative;
     }
-    .modalHead{
-      padding: 12px 14px;
-      border-bottom: 1px solid rgba(255,255,255,0.10);
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
+    .modalHeader{
+      padding:14px 14px 12px;
+      display:flex; align-items:center; justify-content:space-between;
+      border-bottom:1px solid rgba(255,255,255,.10);
     }
-    .modalHead strong{ font-size: 14px; }
-    .closeX{
-      cursor:pointer;
-      border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(255,255,255,0.06);
-      border-radius: 12px;
-      padding: 6px 10px;
-      font-size: 12px;
-      color: var(--text);
+    .modalHeader h3{ margin:0; font-size:14px; letter-spacing:.08em; text-transform:uppercase; color:rgba(255,255,255,.78); }
+    .modalBody{ padding:14px; color:rgba(255,255,255,.88); line-height:1.45; }
+    .x{
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.06);
+      color:white; border-radius:10px;
+      padding:8px 10px; cursor:pointer;
     }
-    .modalBody{
-      padding: 14px;
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-    @media (max-width: 780px){
-      .modalBody{ grid-template-columns: 1fr; }
-    }
-    .box{
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.10);
-      border-radius: 16px;
-      padding: 12px;
-    }
-    .box h4{
-      margin:0 0 8px;
-      font-size: 12px;
-      letter-spacing: 0.8px;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-    .box p{
-      margin:0;
-      color: var(--text);
-      font-size: 13px;
-      line-height: 1.45;
-    }
-    .box ul{
-      margin: 8px 0 0;
-      padding-left: 18px;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.45;
-    }
-    .tipRow{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      margin-top: 6px;
-    }
-    .tip{
-      font-size: 11px;
-      padding: 7px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(0,0,0,0.15);
-      color: var(--muted);
-      white-space:nowrap;
-    }
-    .tip b{ color: var(--text); font-weight: 750; }
 
-    .objectGrid{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
+    .glowLine{
+      height:1px;
+      background: linear-gradient(90deg, transparent, rgba(255,62,165,.6), rgba(255,138,43,.6), transparent);
+      opacity:.85;
     }
-    .objectBtn{
-      width:100%;
-      text-align:left;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.05);
-      color: var(--text);
-      border-radius: 16px;
-      padding: 10px 10px;
-      cursor:pointer;
-    }
-    .objectBtn:hover{ background: rgba(255,255,255,0.08); }
 
-    .smallRow{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      align-items:center;
-      margin-top: 10px;
-    }
-    .mutedNote{
-      color: var(--muted2);
-      font-size: 12px;
+    @media (max-width: 980px){
+      .grid{ grid-template-columns: 1fr; }
+      .rightTop{ grid-template-columns: 1fr; }
+      .topRight{ align-items:flex-start; min-width:auto; }
+      header{ flex-direction:column; }
     }
   </style>
 </head>
+
 <body>
   <div class="wrap">
     <header>
       <div class="title">
-        <h1>Blair Ghost Helper</h1>
-        <p class="sub">Tap clues you’ve seen. It ranks the most likely ghost even if you only have a little info. Tap any ghost to see details + double check.</p>
-        <div class="tipRow" id="tipRow"></div>
+        <h1>Blair Ghost Tracker</h1>
+        <div class="sub">Tap what you saw. It ranks the most likely ghost even if you only have a little info.</div>
       </div>
 
-      <div class="topbar">
-        <div class="pill">
-          <span>Map</span>
-          <span class="selectWrap">
+      <div class="topRight">
+        <div class="controls">
+          <div class="field">
+            <label>House / Map</label>
             <select id="mapSelect">
-              <option value="Unknown">Unknown</option>
+              <option>Any</option>
               <option>Farmhouse</option>
               <option>Juniper Street</option>
               <option>Mulburry Lane</option>
@@ -544,698 +379,668 @@
               <option>School</option>
               <option>Dunwich Sanatorium</option>
             </select>
-          </span>
-        </div>
-
-        <div class="pill">
-          <span>Difficulty</span>
-          <span class="selectWrap">
-            <select id="diffSelect">
-              <option value="Easy">Easy</option>
-              <option value="Medium">Medium</option>
-              <option value="Hard">Hard</option>
-              <option value="Nightmare">Nightmare</option>
+          </div>
+          <div class="field">
+            <label>Level</label>
+            <select id="levelSelect">
+              <option value="easy">Easy</option>
+              <option value="medium">Medium</option>
+              <option value="hard">Hard</option>
+              <option value="nightmare">Nightmare</option>
             </select>
-          </span>
+          </div>
+          <button class="miniBtn" id="howBtn">How this works</button>
         </div>
 
-        <button class="btn" id="resetBtn">Reset</button>
+        <div class="chipsRow" id="tipsRow"></div>
       </div>
     </header>
 
     <div class="grid">
-      <!-- LEFT: OBSERVATIONS + OBJECTS -->
-      <div class="card">
-        <div class="cardHead">
-          <h2>Your clicks</h2>
-          <div class="hint">Tap cycles: Yes → No → ?</div>
+      <!-- LEFT -->
+      <section class="panel">
+        <div class="panelHeader">
+          <h2>Your observations</h2>
+          <button class="btn" id="resetBtn">Reset</button>
         </div>
-        <div class="body">
 
-          <div class="section">
-            <div class="sectionTitle">
-              <h3>Evidence</h3>
-              <div class="hint">These are the main evidences</div>
-            </div>
-            <div class="chips" id="evidenceChips"></div>
+        <div class="content">
+          <div class="tiny">Tap once = <b>Yes</b>, tap twice = <b>No</b>, tap again = <b>Unknown</b></div>
+
+          <div class="sectionTitle">
+            <span>Evidence</span>
+            <span class="tiny">Main evidence</span>
+          </div>
+          <div class="row" id="evidencePills"></div>
+
+          <div class="sectionTitle" style="margin-top:14px;">
+            <span>Quick clues</span>
+            <span class="tiny">Stuff you notice fast</span>
+          </div>
+          <div class="row" id="cluePills"></div>
+
+          <div class="sectionTitle" style="margin-top:14px;">
+            <span>Haunted item spotted</span>
+            <span class="tiny">Click what happened</span>
+          </div>
+          <div class="row" id="hauntedPills"></div>
+
+          <div class="sectionTitle" style="margin-top:14px;">
+            <span>Cursed objects + info</span>
+            <span class="tiny">Tap to learn how it works</span>
           </div>
 
-          <div class="section">
-            <div class="sectionTitle">
-              <h3>Simple clues (what you actually notice)</h3>
-              <div class="hint">Use these even if you have no evidence yet</div>
-            </div>
-            <div class="chips" id="clueChips"></div>
+          <div class="row">
+            <button class="pill" data-state="maybe" data-info="Music Box" id="co_music"><span class="dot"></span>Music Box</button>
+            <button class="pill" data-state="maybe" data-info="Spirit Board" id="co_board"><span class="dot"></span>Spirit Board</button>
+            <button class="pill" data-state="maybe" data-info="Summoning Circle" id="co_circle"><span class="dot"></span>Summoning Circle</button>
+            <button class="pill" data-state="maybe" data-info="Tarot Cards" id="co_tarot"><span class="dot"></span>Tarot Cards</button>
           </div>
 
-          <div class="section">
-            <div class="sectionTitle">
-              <h3>Cursed objects + info</h3>
-              <div class="hint">Tap to learn how it works</div>
+          <div style="margin-top:10px;" class="row">
+            <div class="field" style="min-width:240px;">
+              <label>Tarot card you pulled</label>
+              <select id="tarotSelect">
+                <option value="">None</option>
+                <option>The Fool</option>
+                <option>The Sun</option>
+                <option>The Moon</option>
+                <option>The Tower</option>
+                <option>The Devil</option>
+                <option>Death</option>
+                <option>The Hermit</option>
+                <option>The Wheel of Fortune</option>
+                <option>The Chariot</option>
+                <option>The Monstrosity</option>
+              </select>
             </div>
-            <div class="objectGrid">
-              <button class="objectBtn" data-obj="Music Box">Music Box</button>
-              <button class="objectBtn" data-obj="Spirit Board">Spirit Board</button>
-              <button class="objectBtn" data-obj="Summoning Circle">Summoning Circle</button>
-              <button class="objectBtn" data-obj="Tarot Cards">Tarot Cards</button>
-            </div>
-
-            <div class="smallRow" style="margin-top:12px;">
-              <span class="mutedNote">Tarot card you pulled:</span>
-              <span class="selectWrap">
-                <select id="tarotSelect">
-                  <option value="">None</option>
-                </select>
-              </span>
-              <button class="btn" id="tarotExplainBtn">Explain</button>
-            </div>
+            <button class="miniBtn" id="tarotExplain">Explain</button>
           </div>
 
         </div>
-      </div>
+      </section>
 
-      <!-- RIGHT: RESULTS -->
-      <div class="rightCol">
-        <div class="hero">
-          <div class="most card">
-            <div class="mostTop">
-              <div>
-                <p class="mostSub" style="margin:0;color:var(--muted);font-size:11px;letter-spacing:0.8px;text-transform:uppercase;">Most likely</p>
-                <h2 class="mostName" id="mostName">Pick a clue to start</h2>
-                <p class="mostSub" id="mostDesc">Nothing selected yet, so I’m not guessing.</p>
-                <div class="tags" id="mostTags"></div>
+      <!-- RIGHT -->
+      <section class="panel">
+        <div class="panelHeader">
+          <h2>Results</h2>
+          <div class="muted" id="pickedCount">0 picks</div>
+        </div>
+
+        <div class="content">
+          <div class="rightTop">
+            <div>
+              <p class="bigTitle">Most likely</p>
+
+              <div id="topSlot">
+                <div class="emptyState">
+                  Nothing selected yet.<br>
+                  Start clicking evidence/clues and I’ll rank the ghosts.
+                </div>
+              </div>
+
+              <div class="glowLine" style="margin:14px 0;"></div>
+              <div id="ghostDetails"></div>
+            </div>
+
+            <div class="panel" style="box-shadow:none;">
+              <div class="panelHeader">
+                <h2>Confidence score</h2>
+              </div>
+              <div class="meterBox">
+                <div class="meterLabel">
+                  <div class="cap">Percent</div>
+                  <div class="val" id="pctVal">0%</div>
+                </div>
+                <div class="bar"><div class="fill" id="pctFill"></div></div>
+                <div class="meterHint">Higher = more matches, fewer contradictions</div>
               </div>
             </div>
           </div>
 
-          <div class="scoreBox card">
-            <div class="scoreLabel">Confidence</div>
-            <div class="scoreRow">
-              <div class="bigPct" id="pctText">0%</div>
-              <div class="hint" id="scoreTiny">0 matches</div>
-            </div>
-            <div class="meter"><div class="fill" id="pctFill"></div></div>
-            <div class="meterNote">Higher = more matches + fewer contradictions.</div>
-          </div>
+          <div class="list" id="rankList"></div>
         </div>
-
-        <div class="list card" id="list"></div>
-      </div>
+      </section>
     </div>
   </div>
 
   <!-- MODAL -->
-  <div class="modalBackdrop" id="backdrop">
-    <div class="modal" role="dialog" aria-modal="true">
-      <div class="modalHead">
-        <strong id="modalTitle">Details</strong>
-        <button class="closeX" id="closeModal">Close</button>
+  <div class="modalBack" id="modalBack">
+    <div class="modal">
+      <div class="modalHeader">
+        <h3 id="modalTitle">Info</h3>
+        <button class="x" id="modalClose">Close</button>
       </div>
       <div class="modalBody" id="modalBody"></div>
     </div>
   </div>
 
-  <script>
-    // ---------- Data ----------
-    // Evidence table source: your pasted Blair ghost evidences :contentReference[oaicite:0]{index=0}
-    // Tarot info source: your pasted tarot page content :contentReference[oaicite:1]{index=1}
-    // (Also: your long paste includes cursed objects descriptions + ghost behaviors; used here too.)
-
-    const EVIDENCE = [
-      { id:"emf5", label:"EMF 5" },
-      { id:"freezing", label:"Freezing temps" },
-      { id:"writing", label:"Ghost writing" },
-      { id:"uv", label:"Ultraviolet" },
-      { id:"orbs", label:"Ghost orbs" },
-      { id:"spiritbox", label:"Spirit box" },
-      { id:"sls", label:"SLS anomaly" },
-    ];
-
-    // Your preferred simple observations (not 1000 “hard mode” things)
-    // Each one can be used for scoring, even if it’s not a “guarantee”
-    const CLUES = [
-      { id:"salt_yes", label:"Stepped in salt (footprints)", note:"If YES, likely not Wraith" },
-      { id:"salt_no", label:"Did NOT step in salt", note:"Huge for Wraith" },
-
-      { id:"para_banshee", label:"Parabolic: Banshee scream", note:"Banshee" },
-      { id:"para_demon", label:"Parabolic: Demon roar", note:"Rare but Demon" },
-
-      { id:"burnt_crucifix", label:"Burnt crucifix", note:"Hunt attempt blocked (or ignored for Demon rare)" },
-      { id:"crucifix_far", label:"Crucifix worked from far away", note:"Demon range" },
-
-      { id:"hunt_high_sanity", label:"Hunts at high sanity", note:"Demon / ZoZo / Vuult (high charge)" },
-      { id:"low_activity", label:"Low activity for a long time", note:"Shade (or Vuult low charge)" },
-      { id:"high_activity", label:"High activity a lot", note:"Poltergeist / Demon / ZoZo / Mare (dark)" },
-
-      { id:"turns_off_lights", label:"Turns off lights a lot", note:"Mare / Vuult (high charge)" },
-      { id:"turns_on_lights", label:"Turns ON lights / breaker", note:"Vuult (low charge)" },
-      { id:"no_breaker_box", label:"Breaker keeps going off / power weird", note:"Vuult likes messing with power" },
-
-      { id:"turns_on_water", label:"Turns on water / water running", note:"Strigoi likes water" },
-      { id:"turn_off_water_triggers", label:"Turning off water triggered hunt/event", note:"Strigoi can do this" },
-
-      { id:"fast_when_sees_you", label:"Slow… then FAST when it sees you", note:"Revenant" },
-      { id:"doesnt_speed_up_los", label:"Does NOT speed up when it sees you", note:"Lament (never speeds up)" },
-
-      { id:"mimics_sounds", label:"Mimics equipment sounds", note:"Faejkur" },
-      { id:"fake_hunt_end", label:"Fake hunt ending (lights off + quiet)", note:"Lament" },
-
-      { id:"missing_items", label:"Items missing / stolen", note:"Nook" },
-      { id:"threw_many_items", label:"Threw lots of items (pile explosion)", note:"Poltergeist" },
-
-      { id:"targets_one_player", label:"Targets one person only", note:"Banshee" },
-
-      { id:"zoro_board_red", label:"Spirit Board: letters turn red / says ZoZo", note:"ZoZo" },
-      { id:"zoro_scream", label:"Heard loud ZoZo scream during hunt", note:"ZoZo" },
-
-      { id:"wraith_teleport_emf2", label:"Random EMF 2 (teleport)", note:"Wraith" },
-
-      { id:"yama_roamy", label:"Keeps changing favorite room", note:"Yama or Nook" },
-      { id:"nook_room_items", label:"Moves to room with most items", note:"Nook" },
-
-      { id:"yurei_blind", label:"Ghost ignores you if you stand still", note:"Yurei test" },
-
-      { id:"strigoi_invisible_near_water", label:"Gets invisible near water", note:"Strigoi" },
-      { id:"strigoi_4_fingers", label:"UV prints show 4 fingers", note:"Strigoi" },
-
-      { id:"banshee_parabolic_hold", label:"Holding parabolic longer increases chance", note:"Banshee tip" },
-
-      { id:"vuult_emf_break", label:"EMF reader broke / got smashed", note:"Vuult" }
-    ];
-
-    // Ghost database (evidence is official table; behavior + special clues from your paste)
-    const GHOSTS = [
-      {
-        name:"Banshee",
-        evidence:["emf5","freezing","sls"],
-        desc:"Fixates on one target until they die. Can give a unique scream in the parabolic mic.",
-        behaviors:["targets_one_player","para_banshee","banshee_parabolic_hold"],
-        tips:["Parabolic scream = yes → Banshee","If target is inside, it ignores others"]
-      },
-      {
-        name:"Demon",
-        evidence:["freezing","writing","spiritbox"],
-        desc:"Very aggressive. Hunts at high sanity. Crucifix works from farther away, and there’s a rare roar when it burns.",
-        behaviors:["hunt_high_sanity","crucifix_far","burnt_crucifix","para_demon","high_activity"],
-        tips:["Crucifix range feels bigger","Expect lots of events + hunts"]
-      },
-      {
-        name:"Faejkur",
-        evidence:["emf5","freezing","writing"],
-        desc:"Mimics equipment sounds. Can create fake footsteps during hunts.",
-        behaviors:["mimics_sounds"],
-        tips:["Listen for a deeper/odd version of a sound you just made"]
-      },
-      {
-        name:"Harrow",
-        evidence:["writing","orbs","sls"],
-        desc:"Never roams from its favorite room. Faster closer to its room, slower farther away.",
-        behaviors:[],
-        tips:["If it never roams, keep checking that room"]
-      },
-      {
-        name:"Krasue",
-        evidence:["emf5","freezing","uv"],
-        desc:"Can change form. Terrified of fire—flames can slow it in head form.",
-        behaviors:[],
-        tips:["Keep a lighter / candles can help"]
-      },
-      {
-        name:"Lament",
-        evidence:["emf5","orbs","spiritbox"],
-        desc:"Can fake the end of a hunt (lights off + quiet). Never speeds up in line of sight.",
-        behaviors:["fake_hunt_end","doesnt_speed_up_los"],
-        tips:["If hunt feels ‘fake ended’ but it’s still hunting, suspect Lament"]
-      },
-      {
-        name:"Mare",
-        evidence:["freezing","spiritbox","sls"],
-        desc:"Hates light. More dangerous in the dark. Turns off lights a lot and can blow out candles from far.",
-        behaviors:["turns_off_lights","high_activity"],
-        tips:["If lights on = calmer, lights off = chaos, suspect Mare"]
-      },
-      {
-        name:"Nook",
-        evidence:["emf5","freezing","orbs"],
-        desc:"Greedy. Loves items. May steal items / make them vanish and shift toward item-heavy rooms.",
-        behaviors:["missing_items","nook_room_items","yama_roamy"],
-        tips:["Pile items in one room and see if stuff goes missing"]
-      },
-      {
-        name:"Poltergeist",
-        evidence:["uv","orbs","spiritbox"],
-        desc:"Very interactive with objects. Can throw many items at once (poltsplosion). Often stays active.",
-        behaviors:["threw_many_items","high_activity"],
-        tips:["If a pile explodes → Poltergeist is basically confirmed"]
-      },
-      {
-        name:"Revenant",
-        evidence:["emf5","writing","uv"],
-        desc:"Very slow unless it sees you, then extremely fast.",
-        behaviors:["fast_when_sees_you"],
-        tips:["If it’s slow… then rockets when it sees you → Revenant"]
-      },
-      {
-        name:"Shade",
-        evidence:["emf5","writing","sls"],
-        desc:"Shy and inactive. Hunts are rarer and it won’t hunt when people are right in the room with it.",
-        behaviors:["low_activity"],
-        tips:["Long low activity + low sanity but no hunts can point to Shade"]
-      },
-      {
-        name:"Spirit",
-        evidence:["writing","uv","spiritbox"],
-        desc:"The ‘normal’ ghost. Incense affects it more than others.",
-        behaviors:[],
-        tips:["If nothing special fits, Spirit is possible"]
-      },
-      {
-        name:"Strigoi",
-        evidence:["emf5","uv","orbs"],
-        desc:"Water-focused. Can go invisible near water. Turning off water can trigger hunt/event. Can show 4-finger UV.",
-        behaviors:["turns_on_water","turn_off_water_triggers","strigoi_invisible_near_water","strigoi_4_fingers"],
-        tips:["Test water: if it gets angry when you turn it off, suspect Strigoi"]
-      },
-      {
-        name:"Vuult",
-        evidence:["emf5","orbs","sls"],
-        desc:"Electricity/charge based. Low charge = calm, high charge = can hunt at any sanity. Can smash EMF reader at max charge.",
-        behaviors:["no_breaker_box","turns_on_lights","turns_off_lights","hunt_high_sanity","vuult_emf_break","low_activity","high_activity"],
-        tips:["Power weirdness + sudden personality change = Vuult vibes"]
-      },
-      {
-        name:"Wraith",
-        evidence:["freezing","orbs","sls"],
-        desc:"Roamy and can teleport. Never steps in salt. Teleport can show random EMF 2.",
-        behaviors:["salt_no","wraith_teleport_emf2"],
-        tips:["Salt test: if it NEVER steps in it, Wraith is likely"]
-      },
-      {
-        name:"Yama",
-        evidence:["writing","spiritbox","sls"],
-        desc:"Very roamy and can change favorite room multiple times. Has a special growl response in spirit box.",
-        behaviors:["yama_roamy"],
-        tips:["If favorite room keeps changing, Yama (or Nook)"]
-      },
-      {
-        name:"Yurei",
-        evidence:["freezing","uv","spiritbox"],
-        desc:"Blind but hears movement and electronics. Standing still with no electronics can sometimes save you.",
-        behaviors:["yurei_blind"],
-        tips:["Try the stand-still test (carefully)"]
-      },
-      {
-        name:"ZoZo",
-        evidence:["emf5","uv","spiritbox"],
-        desc:"Very dangerous, active, and tied to the spirit board. Can override it and make letters red / keep spelling ZoZo.",
-        behaviors:["zoro_board_red","zoro_scream","hunt_high_sanity","high_activity"],
-        tips:["Spirit Board turning red / refusing goodbye = ZoZo"]
-      }
-    ];
-
-    const CURSED_OBJECTS = {
-      "Music Box": {
-        title:"Music Box",
-        info:"A special item that can start a cursed hunt and lure the ghost during a hunt (costs sanity). It can break after use.",
-        how:"Use/activate it to play. It can trigger a cursed hunt after some time, and can act like a lure if used during a hunt."
-      },
-      "Spirit Board": {
-        title:"Spirit Board",
-        info:"Communicates with the ghost at the cost of sanity. If you don’t end it properly, it can burn and trigger a cursed hunt.",
-        how:"Interact to ask questions. Make sure you end it (farewell prompt) or it can burn and become unusable."
-      },
-      "Summoning Circle": {
-        title:"Summoning Circle",
-        info:"Forces the ghost to manifest and starts a cursed hunt at the cost of sanity.",
-        how:"Light it (lighter) to start the cursed hunt. Can be relit."
-      },
-      "Tarot Cards": {
-        title:"Tarot Cards",
-        info:"Random effects (buffs/curses). You can draw up to 10 cards. Each one burns and triggers its effect.",
-        how:"Draw a card → it burns → effect happens. Drawing outside or during a hunt becomes The Fool (safe but useless)."
-      }
-    };
-
-    // Tarot cards: pulled straight from your paste :contentReference[oaicite:2]{index=2}
-    const TAROT = [
-      { id:"Wheel of Fortune", text:"Green = +25% sanity, Red = -25% sanity. (Chance-based.)" },
-      { id:"The Tower", text:"Forces the ghost to interact nearby (throw item / open door/closet)." },
-      { id:"The Chariot", text:"Forces the ghost into the room you pulled it in. (Guaranteed to fool if the ghost is a Harrow.)" },
-      { id:"The Hermit", text:"Traps the ghost in its favorite room for 1 minute." },
-      { id:"The Monstrosity", text:"Triggers a flash or whisper/hiss event in the room the ghost is currently in." },
-      { id:"The Moon", text:"Immediately drains your sanity to 0%." },
-      { id:"The Sun", text:"Immediately restores your sanity to 100%." },
-      { id:"The Fool", text:"No effect. Always happens if you draw outside or during a hunt." },
-      { id:"Death", text:"Immediately triggers a cursed hunt. (If not drawn by 1-9, the 10th is guaranteed.)" },
-      { id:"The High Priestess", text:"Revives a dead player (or the next person who dies if nobody is dead yet)." },
-      { id:"The Trap", text:"Kills you after it burns. No escape." },
-      { id:"The Boo-Boo Doll", text:"Spawns a huge amount of Boo-Boo dolls around the map." },
-    ];
-
-    const TOP_TIPS = [
-      { t:"Salt footprints", v:"No", a:"→ Wraith" },
-      { t:"Parabolic scream", v:"Yes", a:"→ Banshee" },
-      { t:"Spirit Board turns red", v:"Yes", a:"→ ZoZo" },
-      { t:"Slow then FAST on sight", v:"Yes", a:"→ Revenant" },
-      { t:"Water off triggers hunt", v:"Yes", a:"→ Strigoi" },
-      { t:"Items missing", v:"Yes", a:"→ Nook" },
-      { t:"Pile of items explodes", v:"Yes", a:"→ Poltergeist" },
-      { t:"Crucifix works far away", v:"Yes", a:"→ Demon" },
-    ];
-
-    // ---------- State ----------
-    // tri-state: U (unknown), Y (yes), N (no)
-    const state = new Map(); // id -> 'U'|'Y'|'N'
-    function getState(id){ return state.get(id) || 'U'; }
-    function setState(id, s){ state.set(id, s); }
-
-    function cycle(id){
-      const cur = getState(id);
-      const next = cur === 'U' ? 'Y' : (cur === 'Y' ? 'N' : 'U');
-      setState(id, next);
-      render();
-    }
-
-    // ---------- Scoring ----------
-    function hasAnySelection(){
-      for(const v of state.values()){
-        if(v !== 'U') return true;
-      }
-      return false;
-    }
-
-    function difficultyWeights(diff){
-      // evidence stays king, but difficulty can make behaviors “more useful”
-      if(diff === "Easy") return { e: 6, c: 2, contra: 5 };
-      if(diff === "Medium") return { e: 6, c: 3, contra: 5 };
-      if(diff === "Hard") return { e: 6, c: 4, contra: 5 };
-      return { e: 6, c: 5, contra: 5 }; // Nightmare
-    }
-
-    function scoreGhost(ghost, diff){
-      const w = difficultyWeights(diff);
-
-      let max = 0;
-      let got = 0;
-      let contradictions = 0;
-      let matches = 0;
-
-      // Evidence scoring
-      for(const ev of EVIDENCE){
-        const s = getState(ev.id);
-        if(s === 'U') continue;
-
-        max += w.e;
-        const has = ghost.evidence.includes(ev.id);
-
-        if(s === 'Y' && has){ got += w.e; matches++; }
-        else if(s === 'N' && !has){ got += w.e * 0.65; matches++; } // “No” can be useful
-        else { contradictions++; got -= w.contra; }
-      }
-
-      // Clue scoring
-      for(const cl of CLUES){
-        const s = getState(cl.id);
-        if(s === 'U') continue;
-
-        max += w.c;
-
-        const supports = ghost.behaviors.includes(cl.id);
-
-        // “Yes” means you saw it
-        if(s === 'Y' && supports){ got += w.c; matches++; }
-        else if(s === 'N' && !supports){
-          // “No” against a clue that’s normally expected can help a bit
-          got += w.c * 0.35;
-          matches++;
-        } else if(s === 'N' && supports){
-          contradictions++;
-          got -= (w.c * 0.9);
-        } else if(s === 'Y' && !supports){
-          // Not necessarily a hard contradiction because many clues are “soft”
-          got -= (w.c * 0.4);
-        }
-      }
-
-      // clamp & percent
-      if(max <= 0) return { pct:0, raw:0, matches:0, contradictions:0 };
-      const raw = got;
-      const pct = Math.max(0, Math.min(100, Math.round((raw / max) * 100)));
-      return { pct, raw, matches, contradictions };
-    }
-
-    // ---------- UI ----------
-    function chipClass(s){
-      if(s === 'Y') return 'chip stateY';
-      if(s === 'N') return 'chip stateN';
-      return 'chip stateU';
-    }
-    function stateText(s){
-      if(s === 'Y') return 'Yes';
-      if(s === 'N') return 'No';
-      return '?';
-    }
-
-    function renderTips(){
-      const el = document.getElementById('tipRow');
-      el.innerHTML = "";
-      TOP_TIPS.forEach(x=>{
-        const d = document.createElement('div');
-        d.className = 'tip';
-        d.innerHTML = `<b>${x.t}</b> = ${x.v} ${x.a}`;
-        el.appendChild(d);
-      });
-    }
-
-    function renderChips(){
-      const eWrap = document.getElementById('evidenceChips');
-      eWrap.innerHTML = "";
-      EVIDENCE.forEach(ev=>{
-        const s = getState(ev.id);
-        const div = document.createElement('div');
-        div.className = chipClass(s);
-        div.onclick = () => cycle(ev.id);
-        div.innerHTML = `<span class="dot"></span><span>${ev.label}</span><small>${stateText(s)}</small>`;
-        eWrap.appendChild(div);
-      });
-
-      const cWrap = document.getElementById('clueChips');
-      cWrap.innerHTML = "";
-      CLUES.forEach(cl=>{
-        const s = getState(cl.id);
-        const div = document.createElement('div');
-        div.className = chipClass(s);
-        div.onclick = () => cycle(cl.id);
-        div.title = cl.note || "";
-        div.innerHTML = `<span class="dot"></span><span>${cl.label}</span><small>${stateText(s)}</small>`;
-        cWrap.appendChild(div);
-      });
-    }
-
-    function badgeList(items){
-      return items.map(x => `<span class="miniTag">${x}</span>`).join("");
-    }
-
-    function renderResults(){
-      const diff = document.getElementById('diffSelect').value;
-
-      const scored = GHOSTS.map(g=>{
-        const s = scoreGhost(g, diff);
-        return { ghost:g, ...s };
-      }).sort((a,b)=> b.pct - a.pct || b.raw - a.raw);
-
-      const picked = hasAnySelection();
-
-      const most = scored[0];
-      const mostName = document.getElementById('mostName');
-      const mostDesc = document.getElementById('mostDesc');
-      const mostTags = document.getElementById('mostTags');
-
-      const pctText = document.getElementById('pctText');
-      const pctFill = document.getElementById('pctFill');
-      const scoreTiny = document.getElementById('scoreTiny');
-
-      if(!picked){
-        mostName.textContent = "Pick a clue to start";
-        mostDesc.textContent = "Nothing selected yet, so I’m not guessing.";
-        mostTags.innerHTML = "";
-        pctText.textContent = "0%";
-        pctFill.style.width = "0%";
-        scoreTiny.textContent = "0 matches";
-      } else {
-        mostName.textContent = most.pct === 0 ? "No strong match yet" : most.ghost.name;
-        mostDesc.textContent = most.pct === 0
-          ? "Try adding 1–2 evidence items (or a strong clue like salt / parabolic / water)."
-          : most.ghost.desc;
-
-        const evTags = most.ghost.evidence.map(eid => EVIDENCE.find(x=>x.id===eid)?.label || eid);
-        mostTags.innerHTML = evTags.map(t=>`<span class="tag">${t}</span>`).join("");
-
-        pctText.textContent = most.pct + "%";
-        pctFill.style.width = most.pct + "%";
-        scoreTiny.textContent = `${most.matches} matches • ${most.contradictions} contradictions`;
-      }
-
-      const list = document.getElementById('list');
-      list.innerHTML = "";
-
-      scored.forEach(item=>{
-        const row = document.createElement('div');
-        row.className = "row";
-        row.onclick = () => openGhostModal(item.ghost, item);
-
-        const ev = item.ghost.evidence.map(eid => EVIDENCE.find(x=>x.id===eid)?.label || eid);
-        const why = (!picked)
-          ? "Tap clues to start ranking"
-          : (item.contradictions > 0 ? "Some conflicts with your clicks" : "No major conflicts");
-
-        row.innerHTML = `
-          <div class="rowLeft">
-            <div class="rowName">${item.ghost.name}</div>
-            <div class="miniTags">${badgeList(ev)}</div>
-          </div>
-          <div class="rowRight">
-            <div class="rowPct">${picked ? (item.pct + "%") : "—"}</div>
-            <div class="rowWhy">${why}</div>
-          </div>
-        `;
-        list.appendChild(row);
-      });
-    }
-
-    function openGhostModal(ghost, scored){
-      const backdrop = document.getElementById('backdrop');
-      const title = document.getElementById('modalTitle');
-      const body = document.getElementById('modalBody');
-
-      title.textContent = ghost.name + (hasAnySelection() ? ` • ${scored.pct}%` : "");
-
-      const ev = ghost.evidence.map(eid => EVIDENCE.find(x=>x.id===eid)?.label || eid);
-      const behaviors = ghost.behaviors
-        .map(cid => CLUES.find(c=>c.id===cid)?.label)
-        .filter(Boolean);
-
-      body.innerHTML = `
-        <div class="box">
-          <h4>Description</h4>
-          <p>${ghost.desc || "No description yet."}</p>
-          <div class="smallRow" style="margin-top:10px;">
-            <span class="miniTag">Matches: ${scored.matches}</span>
-            <span class="miniTag">Contradictions: ${scored.contradictions}</span>
-          </div>
-        </div>
-        <div class="box">
-          <h4>Evidence</h4>
-          <p>${ev.length ? ev.join(", ") : "Unknown"}</p>
-          <h4 style="margin-top:12px;">Behavior clues it’s known for</h4>
-          <p>${behaviors.length ? behaviors.join(", ") : "None set yet (this ghost may rely mostly on evidence)."} </p>
-          <h4 style="margin-top:12px;">Quick tips</h4>
-          <ul>
-            ${(ghost.tips || []).map(t=>`<li>${t}</li>`).join("") || "<li>None yet.</li>"}
-          </ul>
-        </div>
-      `;
-
-      backdrop.style.display = "flex";
-    }
-
-    function openObjectModal(objName){
-      const data = CURSED_OBJECTS[objName];
-      const backdrop = document.getElementById('backdrop');
-      const title = document.getElementById('modalTitle');
-      const body = document.getElementById('modalBody');
-
-      title.textContent = data.title;
-
-      body.innerHTML = `
-        <div class="box">
-          <h4>What it is</h4>
-          <p>${data.info}</p>
-        </div>
-        <div class="box">
-          <h4>How to use</h4>
-          <p>${data.how}</p>
-          <h4 style="margin-top:12px;">Extra</h4>
-          <p class="mutedNote">If you want me to add spawn locations per map, paste them and I’ll plug them in.</p>
-        </div>
-      `;
-
-      backdrop.style.display = "flex";
-    }
-
-    function openTarotModal(cardName){
-      const card = TAROT.find(t=>t.id===cardName);
-      if(!card){
-        alert("Pick a tarot card first.");
-        return;
-      }
-      const backdrop = document.getElementById('backdrop');
-      const title = document.getElementById('modalTitle');
-      const body = document.getElementById('modalBody');
-
-      title.textContent = "Tarot: " + card.id;
-
-      body.innerHTML = `
-        <div class="box">
-          <h4>What it does</h4>
-          <p>${card.text}</p>
-        </div>
-        <div class="box">
-          <h4>Quick tip</h4>
-          <p class="mutedNote">If you’re drawing inside the building, prepare a crucifix/incense in case you pull <b>Death</b>.</p>
-        </div>
-      `;
-      backdrop.style.display = "flex";
-    }
-
-    function renderTarotDropdown(){
-      const sel = document.getElementById('tarotSelect');
-      TAROT.forEach(t=>{
-        const o = document.createElement('option');
-        o.value = t.id;
-        o.textContent = t.id;
-        sel.appendChild(o);
-      });
-    }
-
-    function resetAll(){
-      state.clear();
-      render();
-    }
-
-    function render(){
-      renderChips();
-      renderResults();
-    }
-
-    // ---------- Events ----------
-    document.getElementById('resetBtn').addEventListener('click', resetAll);
-    document.getElementById('diffSelect').addEventListener('change', render);
-    document.getElementById('mapSelect').addEventListener('change', () => {
-      // Map is currently informational only, but kept for your UI request.
-      // Later we can add map-specific notes/tips if you want.
-    });
-
-    document.querySelectorAll('.objectBtn').forEach(btn=>{
-      btn.addEventListener('click', () => openObjectModal(btn.dataset.obj));
-    });
-
-    document.getElementById('tarotExplainBtn').addEventListener('click', () => {
-      const v = document.getElementById('tarotSelect').value;
-      openTarotModal(v);
-    });
-
-    document.getElementById('closeModal').addEventListener('click', () => {
-      document.getElementById('backdrop').style.display = "none";
-    });
-    document.getElementById('backdrop').addEventListener('click', (e) => {
-      if(e.target.id === "backdrop") document.getElementById('backdrop').style.display = "none";
-    });
-
-    // ---------- Init ----------
-    renderTips();
-    renderTarotDropdown();
+<script>
+/* -----------------------------
+   DATA
+------------------------------*/
+
+const EVIDENCE = [
+  "Freezing Temps",
+  "EMF Level 5",
+  "Ghost Orbs",
+  "Spirit Box",
+  "Ghost Writing",
+  "Ultraviolet",
+  "SLS Anomaly"
+];
+
+const CLUES = [
+  "Stepped in salt",
+  "Did NOT step in salt",
+  "Parabolic: Banshee screech",
+  "Parabolic: Demon roar (rare)",
+  "Mimics equipment sounds",
+  "Fake hunt ending / went silent",
+  "Slow → FAST when it sees you",
+  "Blind during hunts (movement-based)",
+  "Hunts at high / any sanity",
+  "Turns off lights a lot",
+  "Turns ON lights (rare/odd)",
+  "Low activity (quiet)",
+  "High activity (constant)",
+  "Turns on water",
+  "Gets invisible near water",
+  "UV prints show 4 fingers",
+  "Targets only one player",
+  "Moves room a lot (roamy)",
+  "Moves to room with most items",
+  "Items go missing",
+  "Crucifix worked from far away",
+  "Burnt crucifix happened"
+];
+
+const HAUNTED_ITEMS = [
+  "Car alarm going off",
+  "Phone/TV/radio interacts a lot",
+  "Doors slam / closes doors",
+  "Footsteps (heavy / clear)",
+  "Lights flickered",
+  "No breaker box / breaker weird",
+  "Haunted object vibe (cursed item found)"
+];
+
+/* Ghost database (evidence is the reliable core; clues are “bonus weighting”) */
+const GHOSTS = [
+  {
+    name:"Banshee",
+    evidence:["EMF Level 5","Freezing Temps","SLS Anomaly"],
+    cluesYes:["Parabolic: Banshee screech","Targets only one player"],
+    cluesNo:[],
+    desc:`Targets one player per match until they die. Can be identified by a unique Banshee screech on the Parabolic Microphone (chance increases the longer you hold it).`
+  },
+  {
+    name:"Demon",
+    evidence:["Freezing Temps","Ghost Writing","Spirit Box"],
+    cluesYes:["Hunts at high / any sanity","Crucifix worked from far away","Burnt crucifix happened","Parabolic: Demon roar (rare)","High activity (constant)"],
+    cluesNo:[],
+    desc:`Very aggressive. Can hunt at very high sanity. Crucifix range works farther against Demon. Rare roar when a crucifix prevents a hunt. Gets faster after hunts.`
+  },
+  {
+    name:"Faejkur",
+    evidence:["EMF Level 5","Freezing Temps","Ghost Writing"],
+    cluesYes:["Mimics equipment sounds"],
+    cluesNo:["Parabolic: Banshee screech"],
+    desc:`Mimics familiar equipment sounds (usually deeper). Can create fake footsteps during hunts.`
+  },
+  {
+    name:"Harrow",
+    evidence:["Ghost Orbs","Ghost Writing","SLS Anomaly"],
+    cluesYes:["Stepped in salt"],
+    cluesNo:["Moves room a lot (roamy)"],
+    desc:`Never roams from its favorite room. Gets faster the closer it is to its room, slower farther away.`
+  },
+  {
+    name:"Lament",
+    evidence:["EMF Level 5","Ghost Orbs","Spirit Box"],
+    cluesYes:["Fake hunt ending / went silent"],
+    cluesNo:[],
+    desc:`Can fake the end of a hunt (lights off + goes quiet, but faint footsteps may still exist). Does not speed up in line of sight.`
+  },
+  {
+    name:"Mare",
+    evidence:["Freezing Temps","Spirit Box","SLS Anomaly"],
+    cluesYes:["Turns off lights a lot","High activity (constant)"],
+    cluesNo:["Turns ON lights (rare/odd)"],
+    desc:`Hates light. More dangerous in the dark, turns off lights often and can sometimes shatter lights.`
+  },
+  {
+    name:"Nook",
+    evidence:["EMF Level 5","Freezing Temps","Ghost Orbs"],
+    cluesYes:["Moves to room with most items","Items go missing","Moves room a lot (roamy)"],
+    cluesNo:[],
+    desc:`Greedy item ghost. Likes rooms with lots of items, can relocate, and can make items vanish.`
+  },
+  {
+    name:"Poltergeist",
+    evidence:["Ultraviolet","Ghost Orbs","Spirit Box"],
+    cluesYes:["High activity (constant)","Phone/TV/radio interacts a lot"],
+    cluesNo:["Low activity (quiet)"],
+    desc:`Super interactive with objects. Can throw multiple items (“poltsplosion”). Often interacts a lot, even during hunts.`
+  },
+  {
+    name:"Revenant",
+    evidence:["EMF Level 5","Ghost Writing","Ultraviolet"],
+    cluesYes:["Slow → FAST when it sees you","Footsteps (heavy / clear)"],
+    cluesNo:[],
+    desc:`Very slow until it sees a player, then it becomes extremely fast. Great to identify by speed change.`
+  },
+  {
+    name:"Shade",
+    evidence:["EMF Level 5","Ghost Writing","SLS Anomaly"],
+    cluesYes:["Low activity (quiet)"],
+    cluesNo:["High activity (constant)"],
+    desc:`Shy + inactive. Hunts are rarer. Needs low average sanity (~35%) to naturally hunt.`
+  },
+  {
+    name:"Spirit",
+    evidence:["Ghost Writing","Ultraviolet","Spirit Box"],
+    cluesYes:[],
+    cluesNo:[],
+    desc:`Mostly “normal” behavior. Incense affects it longer than other ghosts.`
+  },
+  {
+    name:"Strigoi",
+    evidence:["EMF Level 5","Ultraviolet","Ghost Orbs"],
+    cluesYes:["Turns on water","Gets invisible near water","UV prints show 4 fingers"],
+    cluesNo:[],
+    desc:`Water-focused. Can go invisible near running water. Turning off water can trigger a hunt chance. Sometimes has 4-finger UV prints.`
+  },
+  {
+    name:"Vuult",
+    evidence:["EMF Level 5","Ghost Orbs","SLS Anomaly"],
+    cluesYes:["No breaker box / breaker weird","Lights flickered","High activity (constant)","Turns off lights a lot"],
+    cluesNo:["Low activity (quiet)"],
+    desc:`Electricity-based. Activity changes depending on “charge.” More electronics = more dangerous (can hunt at high sanity).`
+  },
+  {
+    name:"Wraith",
+    evidence:["Freezing Temps","Ghost Orbs","SLS Anomaly"],
+    cluesYes:["Did NOT step in salt","Moves room a lot (roamy)"],
+    cluesNo:["Stepped in salt"],
+    desc:`Roamy and never steps in salt. Can (rarely) teleport to a player and cause an EMF 2 reading.`
+  },
+  {
+    name:"Yama",
+    evidence:["Ghost Writing","Spirit Box","SLS Anomaly"],
+    cluesYes:["Moves room a lot (roamy)"],
+    cluesNo:[],
+    desc:`Very roamy and can change favorite room. Has a unique growly Spirit Box response.`
+  },
+  {
+    name:"Yurei",
+    evidence:["Freezing Temps","Ultraviolet","Spirit Box"],
+    cluesYes:["Blind during hunts (movement-based)"],
+    cluesNo:[],
+    desc:`Blind-ish, but hears movement and electronics. Standing still with no electronics can sometimes save you.`
+  },
+  {
+    name:"ZoZo",
+    evidence:["EMF Level 5","Ultraviolet","Spirit Box"],
+    cluesYes:["Hunts at high / any sanity","High activity (constant)"],
+    cluesNo:["Low activity (quiet)"],
+    desc:`Very dangerous and active. Can mess with Spirit Board responses (letters may turn red, repeats “ZoZo”).`
+  },
+  {
+    name:"Krasue",
+    evidence:["Freezing Temps","EMF Level 5","Ultraviolet"],
+    cluesYes:["Hunts at high / any sanity"],
+    cluesNo:[],
+    desc:`Can sometimes change form. Terrified of fire—flames can slow it (especially in head form).`
+  }
+];
+
+const INFO = {
+  "Music Box": `A cursed item that can lure the ghost and start a cursed hunt. Costs sanity. It can break and trigger a cursed hunt. Activate with use (M1 on PC).`,
+  "Spirit Board": `Lets you communicate at the cost of sanity. If you don’t “farewell” it can burn and trigger a cursed hunt. Activate with interact (E on PC).`,
+  "Summoning Circle": `Light it with a lighter to force a manifestation and start a cursed hunt. Costs sanity. You can relight it later.`,
+  "Tarot Cards": `10 cards per deck. Each card burns after use. It can help or ruin your run depending on the pull.`
+};
+
+const TAROT = {
+  "The Fool": "Usually does nothing / can fake you out.",
+  "The Sun": "Good effect (often sanity boost).",
+  "The Moon": "Bad/chaos effect (often sanity loss).",
+  "The Tower": "Starts a cursed hunt / dangerous effect.",
+  "The Devil": "Negative effect (varies).",
+  "Death": "Very dangerous outcome.",
+  "The Hermit": "Can calm/stop the ghost temporarily (varies).",
+  "The Wheel of Fortune": "Random good or bad.",
+  "The Chariot": "Speed-related effect (varies).",
+  "The Monstrosity": "Triggers intense scary effects (varies)."
+};
+
+const TOP_TIPS = [
+  "Tip: Salt footprints = No → Wraith",
+  "Tip: Parabolic screech = Yes → Banshee",
+  "Tip: Fast only when it sees you → Revenant",
+  "Tip: Mimic sounds (deeper) → Faejkur",
+  "Tip: Water + invisible → Strigoi",
+  "Tip: Super low activity → Shade"
+];
+
+/* -----------------------------
+   STATE
+------------------------------*/
+const state = {
+  picks: new Map(),  // key -> "unknown" | "yes" | "no" | "maybe"(used for info buttons only)
+  haunted: new Set(), // haunted items selected
+};
+
+const levelWeights = {
+  easy:   { ev: 10, clue: 4, haunted: 3, contradiction: 14 },
+  medium: { ev: 9,  clue: 5, haunted: 4, contradiction: 13 },
+  hard:   { ev: 8,  clue: 6, haunted: 5, contradiction: 12 },
+  nightmare:{ ev: 7, clue: 7, haunted: 6, contradiction: 11 },
+};
+
+/* -----------------------------
+   UI BUILD
+------------------------------*/
+const evidencePills = document.getElementById("evidencePills");
+const cluePills = document.getElementById("cluePills");
+const hauntedPills = document.getElementById("hauntedPills");
+const rankList = document.getElementById("rankList");
+const topSlot = document.getElementById("topSlot");
+const ghostDetails = document.getElementById("ghostDetails");
+
+const pctVal = document.getElementById("pctVal");
+const pctFill = document.getElementById("pctFill");
+const pickedCount = document.getElementById("pickedCount");
+
+const tipsRow = document.getElementById("tipsRow");
+TOP_TIPS.forEach(t=>{
+  const el=document.createElement("div");
+  el.className="chip";
+  el.textContent=t;
+  tipsRow.appendChild(el);
+});
+
+function makeTriPill(label, group){
+  const b=document.createElement("button");
+  b.className="pill";
+  b.setAttribute("data-state","unknown");
+  b.setAttribute("data-key", group + ":" + label);
+  b.innerHTML=`<span class="dot"></span>${label}`;
+  b.addEventListener("click", ()=>cyclePill(b));
+  return b;
+}
+
+function makeHauntedPill(label){
+  const b=document.createElement("button");
+  b.className="pill";
+  b.setAttribute("data-state","unknown");
+  b.setAttribute("data-key","haunted:"+label);
+  b.innerHTML=`<span class="dot"></span>${label}`;
+  b.addEventListener("click", ()=>{
+    // Haunted items are simple toggle: Unknown -> Yes -> Unknown
+    const cur=b.getAttribute("data-state");
+    const next = (cur==="yes") ? "unknown" : "yes";
+    b.setAttribute("data-state", next);
+    if(next==="yes") state.haunted.add(label); else state.haunted.delete(label);
     render();
-  </script>
+  });
+  return b;
+}
+
+EVIDENCE.forEach(e=> evidencePills.appendChild(makeTriPill(e, "ev")));
+CLUES.forEach(c=> cluePills.appendChild(makeTriPill(c, "clue")));
+HAUNTED_ITEMS.forEach(h=> hauntedPills.appendChild(makeHauntedPill(h)));
+
+function cyclePill(btn){
+  const key = btn.getAttribute("data-key");
+  const cur = btn.getAttribute("data-state");
+  const next = (cur==="unknown") ? "yes" : (cur==="yes") ? "no" : "unknown";
+  btn.setAttribute("data-state", next);
+  state.picks.set(key, next);
+  render();
+}
+
+/* info modal */
+const modalBack = document.getElementById("modalBack");
+const modalTitle = document.getElementById("modalTitle");
+const modalBody = document.getElementById("modalBody");
+document.getElementById("modalClose").onclick = ()=> modalBack.style.display="none";
+modalBack.addEventListener("click",(e)=>{ if(e.target===modalBack) modalBack.style.display="none"; });
+
+function openModal(title, html){
+  modalTitle.textContent = title;
+  modalBody.innerHTML = html;
+  modalBack.style.display="flex";
+}
+
+/* cursed object buttons = info only */
+["co_music","co_board","co_circle","co_tarot"].forEach(id=>{
+  const el = document.getElementById(id);
+  el.addEventListener("click", ()=>{
+    const name = el.getAttribute("data-info");
+    openModal(name, `<div>${INFO[name] || "No info yet."}</div>`);
+  });
+});
+
+document.getElementById("tarotExplain").addEventListener("click", ()=>{
+  const v = document.getElementById("tarotSelect").value;
+  if(!v) return openModal("Tarot Cards", "Pick a card from the dropdown first.");
+  openModal("Tarot: " + v, `<div>${TAROT[v] || "No description added yet."}</div>`);
+});
+
+document.getElementById("howBtn").addEventListener("click", ()=>{
+  openModal("How this works", `
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div><b>Evidence</b> is weighted the strongest.</div>
+      <div><b>Quick clues</b> and <b>haunted items</b> help when you don’t have full evidence.</div>
+      <div>If you mark something <b>No</b> and a ghost requires it, that ghost gets a big penalty.</div>
+      <div>Hard/Nightmare makes clues matter more (because evidence can be annoying to get).</div>
+    </div>
+  `);
+});
+
+document.getElementById("resetBtn").addEventListener("click", ()=>{
+  state.picks.clear();
+  state.haunted.clear();
+  document.querySelectorAll(".pill[data-key]").forEach(p=> p.setAttribute("data-state","unknown"));
+  document.getElementById("tarotSelect").value="";
+  render();
+});
+
+/* -----------------------------
+   SCORING
+------------------------------*/
+function getLevelWeight(){
+  const lvl = document.getElementById("levelSelect").value || "easy";
+  return levelWeights[lvl] || levelWeights.easy;
+}
+
+function readTriState(group, label){
+  const key = group + ":" + label;
+  return state.picks.get(key) || "unknown";
+}
+
+function hasAnySelection(){
+  // evidence/clue or haunted selected
+  if(state.haunted.size>0) return true;
+  for(const v of state.picks.values()){
+    if(v==="yes" || v==="no") return true;
+  }
+  return false;
+}
+
+function scoreGhost(g){
+  const w = getLevelWeight();
+
+  let score = 0;
+  let maxPossible = 0;
+  let conflicts = 0;
+
+  // Evidence
+  for(const ev of EVIDENCE){
+    const s = readTriState("ev", ev);
+    if(s==="unknown") continue;
+
+    maxPossible += w.ev;
+    const has = g.evidence.includes(ev);
+    if(s==="yes"){
+      if(has) score += w.ev;
+      else { score -= w.contradiction; conflicts++; }
+    }else if(s==="no"){
+      if(has) { score -= w.contradiction; conflicts++; }
+      else score += Math.round(w.ev * 0.35);
+    }
+  }
+
+  // Clues
+  for(const c of CLUES){
+    const s = readTriState("clue", c);
+    if(s==="unknown") continue;
+
+    maxPossible += w.clue;
+    const yesList = g.cluesYes || [];
+    const noList  = g.cluesNo || [];
+
+    if(s==="yes"){
+      if(yesList.includes(c)) score += w.clue;
+      else if(noList.includes(c)) { score -= w.contradiction; conflicts++; }
+      else score += Math.round(w.clue * 0.15);
+    }else if(s==="no"){
+      if(yesList.includes(c)) { score -= Math.round(w.clue * 1.5); conflicts++; }
+      else score += Math.round(w.clue * 0.15);
+    }
+  }
+
+  // Haunted items (simple boosts; also helps Vuult / Polter etc with “electric” type moments)
+  if(state.haunted.size){
+    for(const h of state.haunted){
+      maxPossible += w.haunted;
+
+      // lightweight mapping
+      if(h==="Car alarm going off"){
+        if(g.name==="Poltergeist") score += w.haunted;
+        else score += Math.round(w.haunted * 0.15);
+      }
+      else if(h==="Phone/TV/radio interacts a lot"){
+        if(g.name==="Poltergeist") score += w.haunted;
+        else score += Math.round(w.haunted * 0.10);
+      }
+      else if(h==="Doors slam / closes doors"){
+        score += Math.round(w.haunted * 0.20);
+      }
+      else if(h==="Lights flickered"){
+        if(g.name==="Vuult" || g.name==="Mare") score += w.haunted;
+        else score += Math.round(w.haunted * 0.12);
+      }
+      else if(h==="No breaker box / breaker weird"){
+        if(g.name==="Vuult") score += w.haunted;
+        else score += Math.round(w.haunted * 0.08);
+      }
+      else if(h==="Footsteps (heavy / clear)"){
+        if(g.name==="Revenant") score += w.haunted;
+        else score += Math.round(w.haunted * 0.10);
+      }
+      else if(h==="Haunted object vibe (cursed item found)"){
+        score += Math.round(w.haunted * 0.15);
+      }
+    }
+  }
+
+  // Normalize to 0..100-ish for display
+  // Allow negative score, but percent clamps to 0..100
+  const raw = score;
+  const denom = Math.max(1, maxPossible);
+  let pct = Math.round((raw / denom) * 100);
+  pct = Math.max(0, Math.min(100, pct));
+
+  return { score: raw, pct, conflicts };
+}
+
+function formatEvidenceBadges(arr){
+  return arr.map(x=>`<span class="badge">${x}</span>`).join("");
+}
+
+/* -----------------------------
+   RENDER
+------------------------------*/
+function render(){
+  // count picks
+  let picks=0;
+  for(const v of state.picks.values()){
+    if(v==="yes" || v==="no") picks++;
+  }
+  picks += state.haunted.size;
+  pickedCount.textContent = `${picks} pick${picks===1?"":"s"}`;
+
+  // compute + sort
+  const ranked = GHOSTS.map(g=>{
+    const s = scoreGhost(g);
+    return { ...g, ...s };
+  }).sort((a,b)=> b.pct - a.pct || b.score - a.score);
+
+  // top area
+  if(!hasAnySelection()){
+    topSlot.innerHTML = `
+      <div class="emptyState">
+        Nothing selected yet.<br>
+        Start clicking evidence/clues and I’ll rank the ghosts.
+      </div>`;
+    ghostDetails.innerHTML = "";
+    pctVal.textContent = "0%";
+    pctFill.style.width = "0%";
+  }else{
+    const top = ranked[0];
+    topSlot.innerHTML = `
+      <div>
+        <h3 class="ghostName">${top.name}</h3>
+        <div class="badgeRow">${formatEvidenceBadges(top.evidence)}</div>
+        <div style="margin-top:10px;" class="muted">Based on what you selected so far.</div>
+      </div>
+    `;
+
+    pctVal.textContent = `${top.pct}%`;
+    pctFill.style.width = `${top.pct}%`;
+
+    ghostDetails.innerHTML = `
+      <div class="panel" style="margin-top:14px; box-shadow:none;">
+        <div class="panelHeader"><h2>Ghost description</h2></div>
+        <div class="content" style="padding-top:12px;">
+          <div style="color:rgba(255,255,255,.88); line-height:1.45;">
+            ${top.desc}
+          </div>
+          <div style="margin-top:12px;" class="sectionTitle">
+            <span>Quick double-check</span>
+            <span class="tiny">What matches</span>
+          </div>
+          <div class="row">
+            ${(top.cluesYes||[]).slice(0,10).map(c=>`<span class="badge">✅ ${c}</span>`).join("")}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // list
+  rankList.innerHTML = ranked.map(g=>{
+    const tags = g.evidence.slice(0,3).map(x=>`<span class="badge">${x}</span>`).join("");
+    return `
+      <div class="ghostRow">
+        <div class="leftInfo">
+          <p class="gTitle">${g.name}</p>
+          <div class="gSub">${tags}</div>
+          <div class="tiny" style="margin-top:4px;">${g.desc}</div>
+        </div>
+        <div class="scoreBox">
+          <b>${g.pct}%</b>
+          ${g.conflicts ? `<span style="color:rgba(255,77,109,.9)">conflicts: ${g.conflicts}</span>` : `<span class="tiny">no conflicts</span>`}
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+render();
+</script>
 </body>
 </html>
