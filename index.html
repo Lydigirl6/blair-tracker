@@ -3,49 +3,43 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Blair Ghost Tracker</title>
+  <title>Blair Ghost Helper</title>
   <style>
     :root{
-      --bg0:#07060f;
-      --bg1:#0f0b1f;
-      --card:rgba(255,255,255,.08);
-      --card2:rgba(255,255,255,.06);
-      --stroke:rgba(255,255,255,.14);
-      --text:#f6f1ff;
-      --muted:rgba(246,241,255,.72);
-
-      /* NEW THEME: pink + orange */
-      --a:#ff3ea5;   /* pink */
-      --b:#ff8a2b;   /* orange */
-      --good:#44ffb4;
-      --bad:#ff4d6d;
-      --warn:#ffd166;
-
-      --shadow: 0 20px 60px rgba(0,0,0,.55);
-      --r:18px;
+      --bg0:#0b0620;
+      --bg1:#12083a;
+      --card: rgba(255,255,255,.08);
+      --card2: rgba(255,255,255,.06);
+      --stroke: rgba(255,255,255,.12);
+      --text:#f6f3ff;
+      --muted: rgba(246,243,255,.72);
+      --muted2: rgba(246,243,255,.55);
+      --hot1:#ff4fd8; /* pink */
+      --hot2:#ff9a3d; /* orange */
+      --good:#57ffb3;
+      --bad:#ff5e6a;
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
+      --round: 18px;
     }
 
-    *{ box-sizing:border-box; }
-    html,body{ height:100%; }
+    *{box-sizing:border-box}
     body{
       margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       color:var(--text);
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
       background:
-        radial-gradient(1100px 700px at 15% 10%, rgba(255,62,165,.25), transparent 55%),
-        radial-gradient(900px 600px at 85% 15%, rgba(255,138,43,.23), transparent 55%),
-        radial-gradient(900px 700px at 55% 85%, rgba(255,62,165,.14), transparent 60%),
-        linear-gradient(180deg, var(--bg0), var(--bg1));
-      overflow-x:hidden;
+        radial-gradient(1100px 600px at 15% 10%, rgba(255,79,216,.18), transparent 55%),
+        radial-gradient(900px 500px at 90% 15%, rgba(255,154,61,.16), transparent 55%),
+        radial-gradient(900px 700px at 55% 95%, rgba(120,70,255,.12), transparent 60%),
+        linear-gradient(180deg, var(--bg1), var(--bg0));
+      min-height:100vh;
     }
 
-    .wrap{ max-width:1180px; margin:0 auto; padding:22px 16px 44px; }
-
+    .wrap{max-width:1200px;margin:0 auto;padding:22px 16px 60px}
     header{
       display:flex; gap:14px; align-items:flex-start; justify-content:space-between;
       margin-bottom:14px;
     }
-
     .title{
       display:flex; flex-direction:column; gap:6px;
     }
@@ -53,994 +47,1107 @@
       margin:0;
       font-size:34px;
       letter-spacing:.2px;
-      line-height:1.08;
-      text-shadow: 0 10px 40px rgba(0,0,0,.55);
+      line-height:1.05;
     }
-    .sub{ color:var(--muted); font-size:14px; }
-
-    .topRight{
-      display:flex; flex-direction:column; align-items:flex-end; gap:10px;
-      min-width:300px;
+    .sub{
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.35;
+      max-width:620px;
     }
 
-    .chipsRow{ display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+    .topbar{
+      display:flex; flex-wrap:wrap; gap:10px; justify-content:flex-end; align-items:center;
+    }
     .chip{
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.18);
       padding:8px 10px;
       border-radius:999px;
-      border:1px solid var(--stroke);
-      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
-      color:rgba(255,255,255,.9);
       font-size:12px;
+      color:var(--muted);
       backdrop-filter: blur(10px);
-      box-shadow: 0 10px 26px rgba(0,0,0,.25);
+      box-shadow: 0 8px 22px rgba(0,0,0,.18);
+      display:flex; gap:8px; align-items:center;
+      max-width: 340px;
       white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
     }
-    .chip b{ color:white; }
+    .chip b{color:var(--text); font-weight:700}
+    .glowdot{
+      width:9px;height:9px;border-radius:50%;
+      background: linear-gradient(135deg, var(--hot1), var(--hot2));
+      box-shadow: 0 0 16px rgba(255,79,216,.45);
+      flex: 0 0 auto;
+    }
 
     .grid{
       display:grid;
-      grid-template-columns: 390px 1fr;
+      grid-template-columns: 420px 1fr;
       gap:14px;
       align-items:start;
     }
 
-    .panel{
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
       border:1px solid var(--stroke);
-      border-radius: var(--r);
-      background: linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.04));
+      border-radius: var(--round);
       box-shadow: var(--shadow);
-      backdrop-filter: blur(14px);
       overflow:hidden;
       position:relative;
     }
-    .panel::before{
-      content:"";
-      position:absolute; inset:-2px;
-      background: radial-gradient(600px 200px at 20% 0%, rgba(255,62,165,.20), transparent 60%),
-                  radial-gradient(600px 200px at 80% 0%, rgba(255,138,43,.18), transparent 60%);
-      pointer-events:none;
-      opacity:.7;
-    }
 
-    .panelHeader{
-      padding:14px 14px 12px;
+    .cardHeader{
       display:flex; align-items:center; justify-content:space-between;
+      padding:14px 14px;
       border-bottom:1px solid rgba(255,255,255,.10);
-      position:relative;
+      background: linear-gradient(90deg, rgba(255,79,216,.10), rgba(255,154,61,.08));
     }
-    .panelHeader h2{
-      margin:0;
+    .cardHeader .left{
+      display:flex; flex-direction:column; gap:2px;
+    }
+    .cardHeader .kicker{
       font-size:12px;
-      letter-spacing:.12em;
+      color:var(--muted);
+      letter-spacing:.5px;
       text-transform:uppercase;
-      color:rgba(255,255,255,.78);
+    }
+    .cardHeader .name{
+      font-size:14px;
+      font-weight:800;
+      letter-spacing:.2px;
     }
 
     .btn{
-      border:1px solid var(--stroke);
-      background: linear-gradient(180deg, rgba(255,255,255,.11), rgba(255,255,255,.05));
-      color:rgba(255,255,255,.92);
-      border-radius:999px;
-      padding:8px 12px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.18);
+      color:var(--text);
+      padding:8px 10px;
+      border-radius:12px;
       font-size:12px;
       cursor:pointer;
-      backdrop-filter: blur(10px);
-      transition: transform .12s ease, border-color .12s ease;
+      transition: transform .05s ease, border-color .2s ease, background .2s ease;
+      backdrop-filter: blur(8px);
     }
-    .btn:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.25); }
-    .btn:active{ transform: translateY(0px); }
+    .btn:hover{border-color: rgba(255,255,255,.28)}
+    .btn:active{transform: translateY(1px)}
+    .btn.hot{
+      border-color: rgba(255,79,216,.42);
+      background: linear-gradient(135deg, rgba(255,79,216,.18), rgba(255,154,61,.16));
+    }
 
-    .content{ padding:14px; position:relative; }
-
-    .row{ display:flex; gap:10px; flex-wrap:wrap; }
-    .muted{ color:var(--muted); font-size:12px; }
-    .tiny{ font-size:11px; color:rgba(255,255,255,.68); }
-
+    .bodyPad{padding:14px}
     .sectionTitle{
-      margin:12px 0 8px;
-      font-size:12px;
-      color:rgba(255,255,255,.85);
       display:flex; align-items:center; justify-content:space-between;
+      margin:10px 0 8px;
+    }
+    .sectionTitle h3{
+      margin:0;
+      font-size:13px;
+      letter-spacing:.3px;
+      text-transform:uppercase;
+      color:var(--muted);
+    }
+    .hint{
+      font-size:12px;
+      color:var(--muted2);
     }
 
-    /* tri-state pills */
+    .pillGrid{
+      display:flex; flex-wrap:wrap; gap:8px;
+    }
+
     .pill{
-      border:1px solid var(--stroke);
-      background: rgba(255,255,255,.06);
-      padding:9px 10px;
-      border-radius: 12px;
-      font-size:12px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.18);
+      color:var(--text);
+      border-radius:999px;
+      padding:10px 12px;
+      font-size:13px;
       cursor:pointer;
       user-select:none;
-      display:flex; align-items:center; gap:8px;
-      transition: transform .12s ease, border-color .12s ease, background .12s ease;
-      min-height:36px;
+      transition: border-color .2s ease, background .2s ease, transform .05s ease;
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      max-width: 100%;
     }
-    .pill:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.26); }
+    .pill:active{transform: translateY(1px)}
     .dot{
-      width:10px; height:10px; border-radius:999px;
-      border:1px solid rgba(255,255,255,.35);
-      background: rgba(255,255,255,.08);
-      flex:0 0 auto;
+      width:10px;height:10px;border-radius:50%;
+      border:1px solid rgba(255,255,255,.30);
+      background: rgba(0,0,0,.25);
+      box-shadow:none;
+    }
+    .pill[data-state="unknown"] .dot{
+      background: rgba(0,0,0,.25);
+      border-color: rgba(255,255,255,.28);
     }
     .pill[data-state="yes"]{
-      border-color: rgba(68,255,180,.45);
-      background: rgba(68,255,180,.10);
+      border-color: rgba(87,255,179,.55);
+      background: rgba(87,255,179,.10);
     }
-    .pill[data-state="yes"] .dot{ background: var(--good); border-color: rgba(0,0,0,.18); }
-
+    .pill[data-state="yes"] .dot{
+      background: rgba(87,255,179,.90);
+      border-color: rgba(87,255,179,.85);
+      box-shadow: 0 0 18px rgba(87,255,179,.22);
+    }
     .pill[data-state="no"]{
-      border-color: rgba(255,77,109,.45);
-      background: rgba(255,77,109,.10);
+      border-color: rgba(255,94,106,.55);
+      background: rgba(255,94,106,.10);
     }
-    .pill[data-state="no"] .dot{ background: var(--bad); border-color: rgba(0,0,0,.18); }
-
-    .pill[data-state="maybe"]{
-      border-color: rgba(255,209,102,.45);
-      background: rgba(255,209,102,.10);
+    .pill[data-state="no"] .dot{
+      background: rgba(255,94,106,.92);
+      border-color: rgba(255,94,106,.85);
+      box-shadow: 0 0 18px rgba(255,94,106,.20);
     }
-    .pill[data-state="maybe"] .dot{ background: var(--warn); border-color: rgba(0,0,0,.18); }
 
-    /* main right area */
+    .row{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+    }
+
+    .select{
+      width:100%;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.22);
+      color: var(--text);
+      padding:10px 12px;
+      border-radius: 12px;
+      font-size:13px;
+      outline:none;
+    }
+
+    /* IMPORTANT: make dropdown options readable */
+    select option{
+      background: #ffffff;
+      color:#111111;
+    }
+
+    .miniActions{
+      display:flex; gap:10px; align-items:center;
+    }
+
+    .explainBox{
+      margin-top:10px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.16);
+      border-radius: 14px;
+      padding:12px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.45;
+      display:none;
+    }
+    .explainBox.show{display:block}
+    .explainBox b{color:var(--text)}
+
+    /* Right column */
     .rightTop{
       display:grid;
-      grid-template-columns: 1fr 320px;
+      grid-template-columns: 1.15fr .85fr;
       gap:14px;
+      margin-bottom:14px;
     }
 
     .bigTitle{
-      font-size:22px;
-      margin:0 0 8px;
+      font-size:24px;
+      margin:2px 0 6px;
+      font-weight:900;
       letter-spacing:.2px;
     }
-    .ghostName{
-      font-size:30px;
-      margin:0;
-      line-height:1.05;
-      letter-spacing:.3px;
+    .emptyState{
+      color: var(--muted);
+      font-size:14px;
+      line-height:1.45;
+      padding:8px 0 0;
     }
 
-    .badgeRow{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
-    .badge{
-      border:1px solid rgba(255,255,255,.16);
-      background: rgba(0,0,0,.16);
+    .tags{
+      display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;
+    }
+    .tag{
+      font-size:12px;
       padding:7px 10px;
       border-radius:999px;
-      font-size:12px;
-      color: rgba(255,255,255,.90);
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.16);
+      color: var(--muted);
     }
+    .tag strong{color:var(--text)}
 
-    .emptyState{
-      padding:24px 14px;
-      border:1px dashed rgba(255,255,255,.22);
-      border-radius: 14px;
-      background: rgba(255,255,255,.04);
-      color: rgba(255,255,255,.78);
-      line-height:1.35;
-    }
-
-    .meterBox{
+    .meterWrap{
       padding:14px;
     }
     .meterLabel{
-      display:flex; align-items:flex-end; justify-content:space-between;
-      margin-bottom:10px;
+      display:flex; align-items:center; justify-content:space-between;
+      color:var(--muted);
+      font-size:12px;
+      letter-spacing:.4px;
+      text-transform:uppercase;
+      margin-bottom:8px;
     }
-    .meterLabel .cap{ font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.70); }
-    .meterLabel .val{ font-size:22px; font-weight:800; }
     .bar{
-      height:10px; border-radius:999px;
+      height:12px;
+      border-radius:999px;
       background: rgba(255,255,255,.10);
       border:1px solid rgba(255,255,255,.12);
       overflow:hidden;
-      box-shadow: inset 0 0 0 1px rgba(0,0,0,.12);
+      position:relative;
     }
-    .fill{
+    .bar > div{
       height:100%;
       width:0%;
-      background: linear-gradient(90deg, var(--a), var(--b));
+      background: linear-gradient(90deg, var(--hot1), var(--hot2));
+      box-shadow: 0 0 22px rgba(255,79,216,.25);
       border-radius:999px;
-      transition: width .22s ease;
+      transition: width .25s ease;
     }
     .meterHint{
-      margin-top:10px;
-      color:rgba(255,255,255,.68);
+      margin-top:8px;
+      color:var(--muted2);
       font-size:12px;
+      line-height:1.35;
     }
 
     .list{
-      margin-top:14px;
-      border-top:1px solid rgba(255,255,255,.10);
+      padding:10px 14px 14px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
     }
     .ghostRow{
-      display:flex; align-items:center; justify-content:space-between;
-      padding:12px 14px;
-      border-bottom:1px solid rgba(255,255,255,.08);
-      gap:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.16);
+      border-radius: 14px;
+      padding:12px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
     }
-    .ghostRow:hover{ background: rgba(255,255,255,.03); }
-    .leftInfo{ display:flex; flex-direction:column; gap:6px; min-width:0; }
-    .gTitle{ margin:0; font-size:16px; }
-    .gSub{ display:flex; gap:6px; flex-wrap:wrap; }
+    .ghostRow .left{
+      min-width:0;
+      flex:1;
+    }
+    .ghostRow .gname{
+      margin:0;
+      font-weight:900;
+      font-size:16px;
+      letter-spacing:.2px;
+    }
+    .ghostRow .small{
+      color: var(--muted2);
+      font-size:12px;
+      margin-top:4px;
+      line-height:1.3;
+    }
+    .ghostRow .miniTags{
+      margin-top:8px;
+      display:flex; flex-wrap:wrap; gap:6px;
+    }
+    .miniTag{
+      font-size:11px;
+      padding:6px 8px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.06);
+      color: var(--muted);
+    }
     .scoreBox{
       text-align:right;
-      min-width:120px;
-      color:rgba(255,255,255,.85);
-      font-size:12px;
+      flex:0 0 auto;
+      min-width:74px;
     }
-    .scoreBox b{ display:block; font-size:16px; color:white; }
-
-    /* forms */
-    .controls{
-      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+    .scoreBox .pct{
+      font-weight:900;
+      font-size:16px;
     }
-    .field{
-      display:flex; flex-direction:column; gap:6px;
-      min-width: 150px;
-    }
-    label{ font-size:11px; letter-spacing:.10em; text-transform:uppercase; color:rgba(255,255,255,.70); }
-    select{
-      width:100%;
-      padding:10px 10px;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,.18);
-      background: rgba(0,0,0,.25);
-      color: rgba(255,255,255,.92);
-      outline:none;
-    }
-    /* FIX: dropdown options readable */
-    select option{
-      color:#111 !important;
-      background:#fff !important;
-    }
-
-    .miniBtn{
-      border-radius:12px;
-      padding:10px 12px;
-      border:1px solid rgba(255,255,255,.18);
-      background: rgba(255,255,255,.07);
-      color: rgba(255,255,255,.92);
-      cursor:pointer;
-    }
-    .miniBtn:hover{ border-color: rgba(255,255,255,.28); }
-
-    /* modal */
-    .modalBack{
-      position:fixed; inset:0;
-      background: rgba(0,0,0,.55);
-      display:none;
-      align-items:center;
-      justify-content:center;
-      padding:18px;
-      z-index:50;
-    }
-    .modal{
-      width:min(740px, 100%);
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.16);
-      background: linear-gradient(180deg, rgba(25,18,45,.92), rgba(12,10,20,.92));
-      box-shadow: 0 30px 90px rgba(0,0,0,.75);
-      overflow:hidden;
-      position:relative;
-    }
-    .modalHeader{
-      padding:14px 14px 12px;
-      display:flex; align-items:center; justify-content:space-between;
-      border-bottom:1px solid rgba(255,255,255,.10);
-    }
-    .modalHeader h3{ margin:0; font-size:14px; letter-spacing:.08em; text-transform:uppercase; color:rgba(255,255,255,.78); }
-    .modalBody{ padding:14px; color:rgba(255,255,255,.88); line-height:1.45; }
-    .x{
-      border:1px solid rgba(255,255,255,.18);
-      background: rgba(255,255,255,.06);
-      color:white; border-radius:10px;
-      padding:8px 10px; cursor:pointer;
-    }
-
-    .glowLine{
-      height:1px;
-      background: linear-gradient(90deg, transparent, rgba(255,62,165,.6), rgba(255,138,43,.6), transparent);
-      opacity:.85;
+    .scoreBox .conf{
+      color: var(--muted2);
+      font-size:11px;
+      margin-top:4px;
     }
 
     @media (max-width: 980px){
-      .grid{ grid-template-columns: 1fr; }
-      .rightTop{ grid-template-columns: 1fr; }
-      .topRight{ align-items:flex-start; min-width:auto; }
-      header{ flex-direction:column; }
+      .grid{grid-template-columns: 1fr}
+      .rightTop{grid-template-columns: 1fr}
+      header{flex-direction:column; align-items:flex-start}
+      .topbar{justify-content:flex-start}
     }
   </style>
 </head>
-
 <body>
   <div class="wrap">
     <header>
       <div class="title">
-        <h1>Blair Ghost Tracker</h1>
-        <div class="sub">Tap what you saw. It ranks the most likely ghost even if you only have a little info.</div>
+        <h1>Blair Ghost Helper</h1>
+        <div class="sub">
+          Tap what you notice. It doesn’t need “perfect evidence” — it ranks the most likely ghost based on whatever you’ve got.
+        </div>
       </div>
 
-      <div class="topRight">
-        <div class="controls">
-          <div class="field">
-            <label>House / Map</label>
-            <select id="mapSelect">
-              <option>Any</option>
-              <option>Farmhouse</option>
-              <option>Juniper Street</option>
-              <option>Mulburry Lane</option>
-              <option>Roadhouse</option>
-              <option>Stillhouse</option>
-              <option>Abandoned House</option>
-              <option>St. Mont's Chapel</option>
-              <option>The Aldridge Hotel</option>
-              <option>Campsite</option>
-              <option>Orphanage</option>
-              <option>School</option>
-              <option>Dunwich Sanatorium</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Level</label>
-            <select id="levelSelect">
-              <option value="easy">Easy</option>
-              <option value="medium">Medium</option>
-              <option value="hard">Hard</option>
-              <option value="nightmare">Nightmare</option>
-            </select>
-          </div>
-          <button class="miniBtn" id="howBtn">How this works</button>
-        </div>
-
-        <div class="chipsRow" id="tipsRow"></div>
+      <div class="topbar" id="tipsBar">
+        <div class="chip"><span class="glowdot"></span><span><b>Tip:</b> Stepped in salt → likely <b>NOT</b> Wraith</span></div>
+        <div class="chip"><span class="glowdot"></span><span><b>Tip:</b> Banshee screech on Parabolic → <b>Banshee</b></span></div>
+        <div class="chip"><span class="glowdot"></span><span><b>Tip:</b> Water on + invisible blinks → <b>Strigoi</b></span></div>
       </div>
     </header>
 
     <div class="grid">
-      <!-- LEFT -->
-      <section class="panel">
-        <div class="panelHeader">
-          <h2>Your observations</h2>
-          <button class="btn" id="resetBtn">Reset</button>
+      <!-- LEFT: observations -->
+      <div class="card">
+        <div class="cardHeader">
+          <div class="left">
+            <div class="kicker">Your Run</div>
+            <div class="name">Observations</div>
+          </div>
+          <button class="btn hot" id="resetBtn">Reset</button>
         </div>
 
-        <div class="content">
-          <div class="tiny">Tap once = <b>Yes</b>, tap twice = <b>No</b>, tap again = <b>Unknown</b></div>
+        <div class="bodyPad">
+          <div class="row" style="margin-bottom:8px">
+            <div style="flex:1">
+              <label class="hint" style="display:block;margin-bottom:6px">House / Map</label>
+              <select class="select" id="houseSelect"></select>
+            </div>
+            <div style="width:170px">
+              <label class="hint" style="display:block;margin-bottom:6px">Difficulty</label>
+              <select class="select" id="difficultySelect"></select>
+            </div>
+          </div>
 
           <div class="sectionTitle">
-            <span>Evidence</span>
-            <span class="tiny">Main evidence</span>
+            <h3>Evidence</h3>
+            <div class="hint">Tap = Yes → No → Unknown</div>
           </div>
-          <div class="row" id="evidencePills"></div>
+          <div class="pillGrid" id="evidenceGrid"></div>
 
-          <div class="sectionTitle" style="margin-top:14px;">
-            <span>Quick clues</span>
-            <span class="tiny">Stuff you notice fast</span>
+          <div class="sectionTitle" style="margin-top:16px">
+            <h3>What happened</h3>
+            <div class="hint">Same tap cycle</div>
           </div>
-          <div class="row" id="cluePills"></div>
+          <div class="pillGrid" id="clueGrid"></div>
 
-          <div class="sectionTitle" style="margin-top:14px;">
-            <span>Haunted item spotted</span>
-            <span class="tiny">Click what happened</span>
-          </div>
-          <div class="row" id="hauntedPills"></div>
-
-          <div class="sectionTitle" style="margin-top:14px;">
-            <span>Cursed objects + info</span>
-            <span class="tiny">Tap to learn how it works</span>
+          <div class="sectionTitle" style="margin-top:16px">
+            <h3>Cursed objects / haunted items</h3>
+            <div class="hint">Pick what you found + hit Explain</div>
           </div>
 
           <div class="row">
-            <button class="pill" data-state="maybe" data-info="Music Box" id="co_music"><span class="dot"></span>Music Box</button>
-            <button class="pill" data-state="maybe" data-info="Spirit Board" id="co_board"><span class="dot"></span>Spirit Board</button>
-            <button class="pill" data-state="maybe" data-info="Summoning Circle" id="co_circle"><span class="dot"></span>Summoning Circle</button>
-            <button class="pill" data-state="maybe" data-info="Tarot Cards" id="co_tarot"><span class="dot"></span>Tarot Cards</button>
-          </div>
-
-          <div style="margin-top:10px;" class="row">
-            <div class="field" style="min-width:240px;">
-              <label>Tarot card you pulled</label>
-              <select id="tarotSelect">
-                <option value="">None</option>
-                <option>The Fool</option>
-                <option>The Sun</option>
-                <option>The Moon</option>
-                <option>The Tower</option>
-                <option>The Devil</option>
-                <option>Death</option>
-                <option>The Hermit</option>
-                <option>The Wheel of Fortune</option>
-                <option>The Chariot</option>
-                <option>The Monstrosity</option>
-              </select>
+            <div style="flex:1">
+              <select class="select" id="cursedSelect"></select>
             </div>
-            <button class="miniBtn" id="tarotExplain">Explain</button>
+            <div class="miniActions">
+              <button class="btn" id="cursedExplainBtn">Explain</button>
+            </div>
           </div>
+          <div class="explainBox" id="cursedExplainBox"></div>
 
+          <div class="sectionTitle" style="margin-top:14px">
+            <h3>Tarot cards</h3>
+            <div class="hint">Optional</div>
+          </div>
+          <div class="row">
+            <div style="flex:1">
+              <select class="select" id="tarotSelect"></select>
+            </div>
+            <div class="miniActions">
+              <button class="btn" id="tarotExplainBtn">Explain</button>
+            </div>
+          </div>
+          <div class="explainBox" id="tarotExplainBox"></div>
         </div>
-      </section>
+      </div>
 
-      <!-- RIGHT -->
-      <section class="panel">
-        <div class="panelHeader">
-          <h2>Results</h2>
-          <div class="muted" id="pickedCount">0 picks</div>
-        </div>
-
-        <div class="content">
-          <div class="rightTop">
-            <div>
-              <p class="bigTitle">Most likely</p>
-
-              <div id="topSlot">
-                <div class="emptyState">
-                  Nothing selected yet.<br>
-                  Start clicking evidence/clues and I’ll rank the ghosts.
-                </div>
+      <!-- RIGHT: results -->
+      <div>
+        <div class="rightTop">
+          <div class="card">
+            <div class="cardHeader">
+              <div class="left">
+                <div class="kicker">Most likely</div>
+                <div class="name">Best match</div>
               </div>
-
-              <div class="glowLine" style="margin:14px 0;"></div>
-              <div id="ghostDetails"></div>
+              <button class="btn" id="copyBtn">Copy Share Link</button>
             </div>
-
-            <div class="panel" style="box-shadow:none;">
-              <div class="panelHeader">
-                <h2>Confidence score</h2>
+            <div class="bodyPad" id="topPickArea">
+              <div class="emptyState" id="emptyTop">
+                Pick any evidence or “what happened” clue and the most likely ghost will show up here.
               </div>
-              <div class="meterBox">
-                <div class="meterLabel">
-                  <div class="cap">Percent</div>
-                  <div class="val" id="pctVal">0%</div>
-                </div>
-                <div class="bar"><div class="fill" id="pctFill"></div></div>
-                <div class="meterHint">Higher = more matches, fewer contradictions</div>
+              <div id="topPick" style="display:none">
+                <div class="bigTitle" id="topName"></div>
+                <div class="tags" id="topEvidenceTags"></div>
+                <div class="explainBox show" id="topDescBox" style="display:block;margin-top:12px"></div>
               </div>
             </div>
           </div>
 
+          <div class="card">
+            <div class="cardHeader">
+              <div class="left">
+                <div class="kicker">Confidence</div>
+                <div class="name">Score</div>
+              </div>
+            </div>
+            <div class="meterWrap">
+              <div class="meterLabel">
+                <span>Confidence</span>
+                <span id="confidencePct">0%</span>
+              </div>
+              <div class="bar"><div id="confidenceBar"></div></div>
+              <div class="meterHint" id="confidenceHint">
+                Starts at 0%. It rises when your picks match a ghost’s evidence/behavior, and drops with contradictions.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="cardHeader">
+            <div class="left">
+              <div class="kicker">Ranked list</div>
+              <div class="name">Top matches</div>
+            </div>
+            <span class="hint" id="countHint">—</span>
+          </div>
           <div class="list" id="rankList"></div>
         </div>
-      </section>
-    </div>
-  </div>
-
-  <!-- MODAL -->
-  <div class="modalBack" id="modalBack">
-    <div class="modal">
-      <div class="modalHeader">
-        <h3 id="modalTitle">Info</h3>
-        <button class="x" id="modalClose">Close</button>
       </div>
-      <div class="modalBody" id="modalBody"></div>
     </div>
   </div>
 
 <script>
-/* -----------------------------
-   DATA
-------------------------------*/
+/* ----------------------------
+   DATABASE (easy to edit later)
+---------------------------- */
 
+const HOUSES = [
+  "Farmhouse","Finjito's","Juniper Street","Mulburry Lane","Roadhouse","Stillhouse",
+  "Abandoned House","St. Mont's Chapel",
+  "The Aldridge Hotel","Campsite","Orphanage","School","Dunwich Sanatorium"
+];
+
+const DIFFICULTIES = [
+  { id:"easy", name:"Easy",   weights:{ evidence: 6, clue: 3, contradiction: 7 } },
+  { id:"medium", name:"Medium", weights:{ evidence: 6, clue: 4, contradiction: 7 } },
+  { id:"hard", name:"Hard",   weights:{ evidence: 5, clue: 5, contradiction: 8 } },
+  { id:"nightmare", name:"Nightmare", weights:{ evidence: 4, clue: 6, contradiction: 9 } }
+];
+
+// Evidence list (clean, simple)
 const EVIDENCE = [
-  "Freezing Temps",
   "EMF Level 5",
-  "Ghost Orbs",
-  "Spirit Box",
+  "Freezing Temps",
   "Ghost Writing",
   "Ultraviolet",
+  "Ghost Orbs",
+  "Spirit Box",
   "SLS Anomaly"
 ];
 
+// Your simplified “what happened” list
 const CLUES = [
   "Stepped in salt",
-  "Did NOT step in salt",
-  "Parabolic: Banshee screech",
-  "Parabolic: Demon roar (rare)",
+  "Blew out candles",
+  "Broke lights",
+  "Saw ghost when at high sanity",
+  "Low temp room",
+
+  "Heard parabolic: Banshee screech",
+  "Heard parabolic: Demon roar (rare)",
   "Mimics equipment sounds",
   "Fake hunt ending / went silent",
-  "Slow → FAST when it sees you",
+  "Fast when it sees you",
   "Blind during hunts (movement-based)",
-  "Hunts at high / any sanity",
+  "Hunts at high sanity",
   "Turns off lights a lot",
-  "Turns ON lights (rare/odd)",
-  "Low activity (quiet)",
-  "High activity (constant)",
+  "Turns on lights",
+  "Low activity",
+  "High activity",
   "Turns on water",
   "Gets invisible near water",
-  "UV prints show 4 fingers",
+  "UV shows 4 fingers",
   "Targets only one player",
-  "Moves room a lot (roamy)",
+  "Moves room a lot",
   "Moves to room with most items",
   "Items go missing",
+  "Burnt crucifix",
   "Crucifix worked from far away",
-  "Burnt crucifix happened"
+  "Closes doors",
+  "Car alarm went off"
 ];
 
-const HAUNTED_ITEMS = [
-  "Car alarm going off",
-  "Phone/TV/radio interacts a lot",
-  "Doors slam / closes doors",
-  "Footsteps (heavy / clear)",
-  "Lights flickered",
-  "No breaker box / breaker weird",
-  "Haunted object vibe (cursed item found)"
+// Cursed objects / haunted items
+const CURSED_OBJECTS = [
+  { id:"none", name:"None", desc:"No cursed object / haunted item found (or you haven’t seen it yet)." },
+  { id:"music_box", name:"Music Box", desc:"Plays a tune and drains sanity. After a bit it breaks and triggers a cursed hunt. Can also lure the ghost during a hunt (the ghost locks onto where the box was held last)." },
+  { id:"spirit_board", name:"Spirit Board", desc:"Lets you ask questions at the cost of sanity. If you don’t properly end it (saying goodbye), it burns and can start a cursed hunt." },
+  { id:"summoning_circle", name:"Summoning Circle", desc:"Light it with a lighter to forcibly manifest the ghost and trigger a cursed hunt (costs a ton of sanity)." },
+  { id:"tarot_cards", name:"Tarot Cards (Deck)", desc:"A deck of 10 cards. Each draw burns the card and gives a positive or negative effect to you/your team." }
 ];
 
-/* Ghost database (evidence is the reliable core; clues are “bonus weighting”) */
+// Tarot cards list (simple “helper mode” descriptions)
+const TAROT = [
+  { id:"none", name:"None", desc:"No tarot card used / pulled." },
+  { id:"fool", name:"The Fool", desc:"Usually a ‘nothing happens / fake-out’ type card. You basically wasted a draw." },
+  { id:"death", name:"Death", desc:"Triggers a dangerous moment — often leads into a hunt / chaos. Be ready to hide." },
+  { id:"tower", name:"The Tower", desc:"Major negative effect. Expect something disruptive (hunts/events/aggro spike)." },
+  { id:"sun", name:"The Sun", desc:"Positive effect. Often helps the team (sanity / safety / breathing room)." },
+  { id:"moon", name:"The Moon", desc:"Negative effect, often sanity-related. Makes things riskier." },
+  { id:"wheel", name:"Wheel of Fortune", desc:"Could be good or bad. It’s literally a gamble." },
+  { id:"devil", name:"The Devil", desc:"A scary/danger card — treat like ‘brace for trouble’." },
+  { id:"chariot", name:"The Chariot", desc:"Movement/escape type effect. Fun card, can save you." },
+  { id:"hermit", name:"The Hermit", desc:"Pauses/contains the ghost temporarily (a breather card)." },
+  { id:"monstrosity", name:"Monstrosity", desc:"Forces a nasty event/manifestation vibe. Usually bad." }
+];
+
+// Ghost database (18 ghosts — includes Krasue)
 const GHOSTS = [
   {
     name:"Banshee",
     evidence:["EMF Level 5","Freezing Temps","SLS Anomaly"],
-    cluesYes:["Parabolic: Banshee screech","Targets only one player"],
-    cluesNo:[],
-    desc:`Targets one player per match until they die. Can be identified by a unique Banshee screech on the Parabolic Microphone (chance increases the longer you hold it).`
+    cluesYes:["Heard parabolic: Banshee screech","Targets only one player","Saw ghost when at high sanity"],
+    desc:"Banshees lock onto one target. If the target is inside, it ignores everyone else. If you hear the unique Banshee screech on the Parabolic Microphone, that’s basically a dead giveaway.",
+    tips:["Try Parabolic in/near ghost room.","Watch if it tunnels one player only.","Don’t confuse line-of-sight pathing with ‘targeting’."]
   },
   {
     name:"Demon",
     evidence:["Freezing Temps","Ghost Writing","Spirit Box"],
-    cluesYes:["Hunts at high / any sanity","Crucifix worked from far away","Burnt crucifix happened","Parabolic: Demon roar (rare)","High activity (constant)"],
-    cluesNo:[],
-    desc:`Very aggressive. Can hunt at very high sanity. Crucifix range works farther against Demon. Rare roar when a crucifix prevents a hunt. Gets faster after hunts.`
+    cluesYes:["Hunts at high sanity","High activity","Burnt crucifix","Crucifix worked from far away"],
+    cluesMaybe:["Heard parabolic: Demon roar (rare)"],
+    desc:"Demons are aggressively hunt-happy and can hunt at high sanity. Crucifixes work from farther away than normal against them.",
+    tips:["If it hunts super early, respect it.","Place crucifix early.","If crucifix range feels huge → Demon vibe."]
   },
   {
     name:"Faejkur",
     evidence:["EMF Level 5","Freezing Temps","Ghost Writing"],
-    cluesYes:["Mimics equipment sounds"],
-    cluesNo:["Parabolic: Banshee screech"],
-    desc:`Mimics familiar equipment sounds (usually deeper). Can create fake footsteps during hunts.`
+    cluesYes:["Mimics equipment sounds","High activity"],
+    desc:"Faejkur mimics equipment noises to confuse you (not footsteps, not banshee scream). If you keep hearing ‘fake’ tool sounds, it might be this.",
+    tips:["Listen for weird ‘off’ copies of sounds.","Try EMF/Tools nearby to bait mimic."]
   },
   {
     name:"Harrow",
-    evidence:["Ghost Orbs","Ghost Writing","SLS Anomaly"],
-    cluesYes:["Stepped in salt"],
-    cluesNo:["Moves room a lot (roamy)"],
-    desc:`Never roams from its favorite room. Gets faster the closer it is to its room, slower farther away.`
+    evidence:["Ghost Writing","Ghost Orbs","SLS Anomaly"],
+    cluesYes:["Fast when it sees you"],
+    desc:"Harrow is super territorial and tied to its favorite room. During hunts it tends to be faster when close to its room and slower farther away.",
+    tips:["Pay attention to footstep speed changes.","If it feels ‘room-anchored’, think Harrow."]
   },
   {
     name:"Lament",
     evidence:["EMF Level 5","Ghost Orbs","Spirit Box"],
     cluesYes:["Fake hunt ending / went silent"],
-    cluesNo:[],
-    desc:`Can fake the end of a hunt (lights off + goes quiet, but faint footsteps may still exist). Does not speed up in line of sight.`
+    desc:"Lament can fake you out by going quiet and making it feel like the hunt ended (but it didn’t). It also doesn’t speed up from seeing you.",
+    tips:["If it goes quiet but the door is still locked → suspicious.","Looping feels easier because it doesn’t ramp speed."]
   },
   {
     name:"Mare",
     evidence:["Freezing Temps","Spirit Box","SLS Anomaly"],
-    cluesYes:["Turns off lights a lot","High activity (constant)"],
-    cluesNo:["Turns ON lights (rare/odd)"],
-    desc:`Hates light. More dangerous in the dark, turns off lights often and can sometimes shatter lights.`
+    cluesYes:["Turns off lights a lot","Blew out candles","Broke lights","High activity"],
+    desc:"Mare hates light. It’s stronger in the dark, turns off lights a lot, and can blow out candles from farther away than normal.",
+    tips:["If lights/candles keep getting bullied → Mare.","Keeping areas lit can reduce its danger (when possible)."]
   },
   {
     name:"Nook",
     evidence:["EMF Level 5","Freezing Temps","Ghost Orbs"],
-    cluesYes:["Moves to room with most items","Items go missing","Moves room a lot (roamy)"],
-    cluesNo:[],
-    desc:`Greedy item ghost. Likes rooms with lots of items, can relocate, and can make items vanish.`
+    cluesYes:["Moves to room with most items","Items go missing","Moves room a lot"],
+    desc:"Nook is item-obsessed and roams until it finds a room with lots of items. It can also steal/vanish objects.",
+    tips:["Pile items and watch if stuff disappears.","If the ghost room keeps shifting with items → Nook vibes."]
   },
   {
     name:"Poltergeist",
     evidence:["Ultraviolet","Ghost Orbs","Spirit Box"],
-    cluesYes:["High activity (constant)","Phone/TV/radio interacts a lot"],
-    cluesNo:["Low activity (quiet)"],
-    desc:`Super interactive with objects. Can throw multiple items (“poltsplosion”). Often interacts a lot, even during hunts.`
+    cluesYes:["High activity","Closes doors","Car alarm went off"],
+    desc:"Poltergeist is a chaos ghost: constant interactions, doors, electronics, and general mess. It tends to keep activity high.",
+    tips:["If the board stays busy nonstop → Poltergeist-ish.","Watch for lots of rapid interactions."]
   },
   {
     name:"Revenant",
-    evidence:["EMF Level 5","Ghost Writing","Ultraviolet"],
-    cluesYes:["Slow → FAST when it sees you","Footsteps (heavy / clear)"],
-    cluesNo:[],
-    desc:`Very slow until it sees a player, then it becomes extremely fast. Great to identify by speed change.`
+    evidence:["EMF Level 5","Ultraviolet","Ghost Writing"],
+    cluesYes:["Fast when it sees you"],
+    desc:"Revenant is slow until it sees someone, then it becomes insanely fast. If you break line of sight, it drops speed quickly.",
+    tips:["Listen: slow wandering → then sudden ‘oh no’ sprint.","Use corners/walls to break sight."]
   },
   {
     name:"Shade",
     evidence:["EMF Level 5","Ghost Writing","SLS Anomaly"],
-    cluesYes:["Low activity (quiet)"],
-    cluesNo:["High activity (constant)"],
-    desc:`Shy + inactive. Hunts are rarer. Needs low average sanity (~35%) to naturally hunt.`
+    cluesYes:["Low activity"],
+    cluesNo:["Saw ghost when at high sanity","High activity"],
+    desc:"Shade is shy and quiet. It tends to do less and hunts later. If everything feels unusually calm, Shade becomes more likely.",
+    tips:["If you’re deep in and it’s still quiet → Shade possibility.","Don’t expect flashy events."]
   },
   {
     name:"Spirit",
     evidence:["Ghost Writing","Ultraviolet","Spirit Box"],
     cluesYes:[],
-    cluesNo:[],
-    desc:`Mostly “normal” behavior. Incense affects it longer than other ghosts.`
+    desc:"The ‘normal’ ghost. No huge gimmick — it behaves fairly standard. Strong reaction to incense (stun longer).",
+    tips:["If nothing special stands out, Spirit stays in the running.","Use incense for safety/testing."]
   },
   {
     name:"Strigoi",
     evidence:["EMF Level 5","Ultraviolet","Ghost Orbs"],
-    cluesYes:["Turns on water","Gets invisible near water","UV prints show 4 fingers"],
-    cluesNo:[],
-    desc:`Water-focused. Can go invisible near running water. Turning off water can trigger a hunt chance. Sometimes has 4-finger UV prints.`
+    cluesYes:["Gets invisible near water","Turns on water","UV shows 4 fingers"],
+    desc:"Strigoi loves water and can go extra invisible near it. It also has a unique UV print chance with 4 fingers.",
+    tips:["If it’s super invisible near a running sink/pool → Strigoi.","Look for 4-finger UV prints."]
   },
   {
     name:"Vuult",
     evidence:["EMF Level 5","Ghost Orbs","SLS Anomaly"],
-    cluesYes:["No breaker box / breaker weird","Lights flickered","High activity (constant)","Turns off lights a lot"],
-    cluesNo:["Low activity (quiet)"],
-    desc:`Electricity-based. Activity changes depending on “charge.” More electronics = more dangerous (can hunt at high sanity).`
+    cluesYes:["Broke lights","Turns off lights a lot","Turns on lights","High activity"],
+    desc:"Vuult’s behavior revolves around electricity/charge. With more electronics/charge, it gets more dangerous and can hunt higher sanity.",
+    tips:["If power/lighting behavior is WEIRD, Vuult is worth thinking about.","High activity + power messing feels Vuult-ish."]
   },
   {
     name:"Wraith",
     evidence:["Freezing Temps","Ghost Orbs","SLS Anomaly"],
-    cluesYes:["Did NOT step in salt","Moves room a lot (roamy)"],
     cluesNo:["Stepped in salt"],
-    desc:`Roamy and never steps in salt. Can (rarely) teleport to a player and cause an EMF 2 reading.`
+    desc:"Wraith never steps in salt. If you see clear salt footprints, Wraith drops hard.",
+    tips:["Salt footprints = Wraith unlikely.","If it roams and you never get salt steps, keep Wraith open."]
   },
   {
     name:"Yama",
     evidence:["Ghost Writing","Spirit Box","SLS Anomaly"],
-    cluesYes:["Moves room a lot (roamy)"],
-    cluesNo:[],
-    desc:`Very roamy and can change favorite room. Has a unique growly Spirit Box response.`
+    cluesYes:["Moves room a lot"],
+    desc:"Yama roams and can change its favorite room multiple times. Stunning/cleansing can stop roaming briefly.",
+    tips:["If the ghost room keeps changing for real → Yama or Nook.","Use incense to slow its roaming momentarily."]
   },
   {
     name:"Yurei",
     evidence:["Freezing Temps","Ultraviolet","Spirit Box"],
     cluesYes:["Blind during hunts (movement-based)"],
-    cluesNo:[],
-    desc:`Blind-ish, but hears movement and electronics. Standing still with no electronics can sometimes save you.`
+    desc:"Yurei is blind-ish during hunts and reacts to movement/electronics. Standing still can sometimes keep you safer.",
+    tips:["Try standing still with electronics off during hunts (carefully).","If it seems to miss you, Yurei rises."]
   },
   {
     name:"ZoZo",
     evidence:["EMF Level 5","Ultraviolet","Spirit Box"],
-    cluesYes:["Hunts at high / any sanity","High activity (constant)"],
-    cluesNo:["Low activity (quiet)"],
-    desc:`Very dangerous and active. Can mess with Spirit Board responses (letters may turn red, repeats “ZoZo”).`
+    cluesYes:["Hunts at high sanity","High activity"],
+    desc:"ZoZo is extremely dangerous and active. Spirit Board use can get messy with ZoZo’s interference and aggressive behavior.",
+    tips:["If it’s aggressive early and constantly active → ZoZo/Demon zone.","Be careful using Spirit Board."]
   },
   {
     name:"Krasue",
     evidence:["Freezing Temps","EMF Level 5","Ultraviolet"],
-    cluesYes:["Hunts at high / any sanity"],
-    cluesNo:[],
-    desc:`Can sometimes change form. Terrified of fire—flames can slow it (especially in head form).`
+    cluesYes:["Blew out candles"],
+    desc:"Krasue can shift into a ‘head form’ and is slowed by flames. Candles/lighters can help slow it during hunts if conditions match.",
+    tips:["Keep a lighter nearby for safety.","More flames can reduce its threat when it’s in head form."]
   }
 ];
 
-const INFO = {
-  "Music Box": `A cursed item that can lure the ghost and start a cursed hunt. Costs sanity. It can break and trigger a cursed hunt. Activate with use (M1 on PC).`,
-  "Spirit Board": `Lets you communicate at the cost of sanity. If you don’t “farewell” it can burn and trigger a cursed hunt. Activate with interact (E on PC).`,
-  "Summoning Circle": `Light it with a lighter to force a manifestation and start a cursed hunt. Costs sanity. You can relight it later.`,
-  "Tarot Cards": `10 cards per deck. Each card burns after use. It can help or ruin your run depending on the pull.`
-};
+/* ----------------------------
+   UI STATE
+---------------------------- */
 
-const TAROT = {
-  "The Fool": "Usually does nothing / can fake you out.",
-  "The Sun": "Good effect (often sanity boost).",
-  "The Moon": "Bad/chaos effect (often sanity loss).",
-  "The Tower": "Starts a cursed hunt / dangerous effect.",
-  "The Devil": "Negative effect (varies).",
-  "Death": "Very dangerous outcome.",
-  "The Hermit": "Can calm/stop the ghost temporarily (varies).",
-  "The Wheel of Fortune": "Random good or bad.",
-  "The Chariot": "Speed-related effect (varies).",
-  "The Monstrosity": "Triggers intense scary effects (varies)."
-};
-
-const TOP_TIPS = [
-  "Tip: Salt footprints = No → Wraith",
-  "Tip: Parabolic screech = Yes → Banshee",
-  "Tip: Fast only when it sees you → Revenant",
-  "Tip: Mimic sounds (deeper) → Faejkur",
-  "Tip: Water + invisible → Strigoi",
-  "Tip: Super low activity → Shade"
-];
-
-/* -----------------------------
-   STATE
-------------------------------*/
 const state = {
-  picks: new Map(),  // key -> "unknown" | "yes" | "no" | "maybe"(used for info buttons only)
-  haunted: new Set(), // haunted items selected
+  evidence: Object.fromEntries(EVIDENCE.map(k=>[k,"unknown"])),
+  clues: Object.fromEntries(CLUES.map(k=>[k,"unknown"])),
+  house: HOUSES[0],
+  difficulty: DIFFICULTIES[0].id,
+  cursed: "none",
+  tarot: "none"
 };
 
-const levelWeights = {
-  easy:   { ev: 10, clue: 4, haunted: 3, contradiction: 14 },
-  medium: { ev: 9,  clue: 5, haunted: 4, contradiction: 13 },
-  hard:   { ev: 8,  clue: 6, haunted: 5, contradiction: 12 },
-  nightmare:{ ev: 7, clue: 7, haunted: 6, contradiction: 11 },
-};
+// Special rule: “Stepped in salt” should NOT be allowed to be “No” (you asked to remove “didn’t step in salt”)
+const NO_DISABLED_FOR = new Set(["Stepped in salt"]);
 
-/* -----------------------------
-   UI BUILD
-------------------------------*/
-const evidencePills = document.getElementById("evidencePills");
-const cluePills = document.getElementById("cluePills");
-const hauntedPills = document.getElementById("hauntedPills");
-const rankList = document.getElementById("rankList");
-const topSlot = document.getElementById("topSlot");
-const ghostDetails = document.getElementById("ghostDetails");
+/* ----------------------------
+   HELPERS
+---------------------------- */
 
-const pctVal = document.getElementById("pctVal");
-const pctFill = document.getElementById("pctFill");
-const pickedCount = document.getElementById("pickedCount");
-
-const tipsRow = document.getElementById("tipsRow");
-TOP_TIPS.forEach(t=>{
-  const el=document.createElement("div");
-  el.className="chip";
-  el.textContent=t;
-  tipsRow.appendChild(el);
-});
-
-function makeTriPill(label, group){
-  const b=document.createElement("button");
-  b.className="pill";
-  b.setAttribute("data-state","unknown");
-  b.setAttribute("data-key", group + ":" + label);
-  b.innerHTML=`<span class="dot"></span>${label}`;
-  b.addEventListener("click", ()=>cyclePill(b));
-  return b;
-}
-
-function makeHauntedPill(label){
-  const b=document.createElement("button");
-  b.className="pill";
-  b.setAttribute("data-state","unknown");
-  b.setAttribute("data-key","haunted:"+label);
-  b.innerHTML=`<span class="dot"></span>${label}`;
-  b.addEventListener("click", ()=>{
-    // Haunted items are simple toggle: Unknown -> Yes -> Unknown
-    const cur=b.getAttribute("data-state");
-    const next = (cur==="yes") ? "unknown" : "yes";
-    b.setAttribute("data-state", next);
-    if(next==="yes") state.haunted.add(label); else state.haunted.delete(label);
-    render();
-  });
-  return b;
-}
-
-EVIDENCE.forEach(e=> evidencePills.appendChild(makeTriPill(e, "ev")));
-CLUES.forEach(c=> cluePills.appendChild(makeTriPill(c, "clue")));
-HAUNTED_ITEMS.forEach(h=> hauntedPills.appendChild(makeHauntedPill(h)));
-
-function cyclePill(btn){
-  const key = btn.getAttribute("data-key");
-  const cur = btn.getAttribute("data-state");
-  const next = (cur==="unknown") ? "yes" : (cur==="yes") ? "no" : "unknown";
-  btn.setAttribute("data-state", next);
-  state.picks.set(key, next);
-  render();
-}
-
-/* info modal */
-const modalBack = document.getElementById("modalBack");
-const modalTitle = document.getElementById("modalTitle");
-const modalBody = document.getElementById("modalBody");
-document.getElementById("modalClose").onclick = ()=> modalBack.style.display="none";
-modalBack.addEventListener("click",(e)=>{ if(e.target===modalBack) modalBack.style.display="none"; });
-
-function openModal(title, html){
-  modalTitle.textContent = title;
-  modalBody.innerHTML = html;
-  modalBack.style.display="flex";
-}
-
-/* cursed object buttons = info only */
-["co_music","co_board","co_circle","co_tarot"].forEach(id=>{
-  const el = document.getElementById(id);
-  el.addEventListener("click", ()=>{
-    const name = el.getAttribute("data-info");
-    openModal(name, `<div>${INFO[name] || "No info yet."}</div>`);
-  });
-});
-
-document.getElementById("tarotExplain").addEventListener("click", ()=>{
-  const v = document.getElementById("tarotSelect").value;
-  if(!v) return openModal("Tarot Cards", "Pick a card from the dropdown first.");
-  openModal("Tarot: " + v, `<div>${TAROT[v] || "No description added yet."}</div>`);
-});
-
-document.getElementById("howBtn").addEventListener("click", ()=>{
-  openModal("How this works", `
-    <div style="display:flex;flex-direction:column;gap:10px;">
-      <div><b>Evidence</b> is weighted the strongest.</div>
-      <div><b>Quick clues</b> and <b>haunted items</b> help when you don’t have full evidence.</div>
-      <div>If you mark something <b>No</b> and a ghost requires it, that ghost gets a big penalty.</div>
-      <div>Hard/Nightmare makes clues matter more (because evidence can be annoying to get).</div>
-    </div>
-  `);
-});
-
-document.getElementById("resetBtn").addEventListener("click", ()=>{
-  state.picks.clear();
-  state.haunted.clear();
-  document.querySelectorAll(".pill[data-key]").forEach(p=> p.setAttribute("data-state","unknown"));
-  document.getElementById("tarotSelect").value="";
-  render();
-});
-
-/* -----------------------------
-   SCORING
-------------------------------*/
-function getLevelWeight(){
-  const lvl = document.getElementById("levelSelect").value || "easy";
-  return levelWeights[lvl] || levelWeights.easy;
-}
-
-function readTriState(group, label){
-  const key = group + ":" + label;
-  return state.picks.get(key) || "unknown";
-}
-
-function hasAnySelection(){
-  // evidence/clue or haunted selected
-  if(state.haunted.size>0) return true;
-  for(const v of state.picks.values()){
-    if(v==="yes" || v==="no") return true;
+function cycleState(cur, key){
+  // unknown -> yes -> no -> unknown
+  if (NO_DISABLED_FOR.has(key)){
+    // unknown -> yes -> unknown
+    return cur === "unknown" ? "yes" : "unknown";
   }
-  return false;
+  if(cur==="unknown") return "yes";
+  if(cur==="yes") return "no";
+  return "unknown";
+}
+
+function anySelected(){
+  const ePicked = Object.values(state.evidence).some(v=>v!=="unknown");
+  const cPicked = Object.values(state.clues).some(v=>v!=="unknown");
+  const objPicked = state.cursed !== "none" || state.tarot !== "none";
+  return ePicked || cPicked || objPicked;
+}
+
+function getWeights(){
+  return DIFFICULTIES.find(d=>d.id===state.difficulty)?.weights || DIFFICULTIES[0].weights;
 }
 
 function scoreGhost(g){
-  const w = getLevelWeight();
+  const w = getWeights();
 
   let score = 0;
   let maxPossible = 0;
-  let conflicts = 0;
+  let contradictions = 0;
 
-  // Evidence
+  // Evidence scoring (heavy)
   for(const ev of EVIDENCE){
-    const s = readTriState("ev", ev);
-    if(s==="unknown") continue;
+    const pick = state.evidence[ev]; // yes/no/unknown
+    if(pick==="unknown") continue;
 
-    maxPossible += w.ev;
+    maxPossible += w.evidence;
+
     const has = g.evidence.includes(ev);
-    if(s==="yes"){
-      if(has) score += w.ev;
-      else { score -= w.contradiction; conflicts++; }
-    }else if(s==="no"){
-      if(has) { score -= w.contradiction; conflicts++; }
-      else score += Math.round(w.ev * 0.35);
+    if(pick==="yes"){
+      if(has) score += w.evidence;
+      else { score -= w.contradiction; contradictions++; }
+    } else if(pick==="no"){
+      if(!has) score += Math.round(w.evidence * 0.55);
+      else { score -= w.contradiction; contradictions++; }
     }
   }
 
-  // Clues
+  // Clues scoring (medium)
+  const yesList = g.cluesYes || [];
+  const noList  = g.cluesNo || [];
+  const maybeList = g.cluesMaybe || [];
+  const isFreezingGhost = g.evidence.includes("Freezing Temps");
+
   for(const c of CLUES){
-    const s = readTriState("clue", c);
-    if(s==="unknown") continue;
+    const pick = state.clues[c];
+    if(pick==="unknown") continue;
 
     maxPossible += w.clue;
-    const yesList = g.cluesYes || [];
-    const noList  = g.cluesNo || [];
 
-    if(s==="yes"){
+    if(pick==="yes"){
+      // soft boost: "Low temp room" gently favors freezing ghosts
+      if(c==="Low temp room" && isFreezingGhost){
+        score += Math.round(w.clue * 0.6);
+      }
       if(yesList.includes(c)) score += w.clue;
-      else if(noList.includes(c)) { score -= w.contradiction; conflicts++; }
-      else score += Math.round(w.clue * 0.15);
-    }else if(s==="no"){
-      if(yesList.includes(c)) { score -= Math.round(w.clue * 1.5); conflicts++; }
-      else score += Math.round(w.clue * 0.15);
+      else if(maybeList.includes(c)) score += Math.round(w.clue * 0.55);
+      else if(noList.includes(c)) { score -= w.contradiction; contradictions++; }
+      else score += Math.round(w.clue * 0.12); // small “soft” signal
+    } else if(pick==="no"){
+      // If they said "No" to something the ghost is known for, that's a contradiction
+      if(yesList.includes(c)) { score -= w.contradiction; contradictions++; }
+      else score += Math.round(w.clue * 0.18);
     }
   }
 
-  // Haunted items (simple boosts; also helps Vuult / Polter etc with “electric” type moments)
-  if(state.haunted.size){
-    for(const h of state.haunted){
-      maxPossible += w.haunted;
+  // Cursed object / tarot (very light)
+  // (This is mostly informational, but we nudge a little where it makes sense)
+  if(state.cursed==="spirit_board" && g.name==="ZoZo") score += 2;
+  if(state.cursed==="summoning_circle" && g.name==="Shade") score += 1; // shades behave oddly here, but keep light
+  if(state.cursed==="music_box" && g.name==="Demon") score += 1;
 
-      // lightweight mapping
-      if(h==="Car alarm going off"){
-        if(g.name==="Poltergeist") score += w.haunted;
-        else score += Math.round(w.haunted * 0.15);
-      }
-      else if(h==="Phone/TV/radio interacts a lot"){
-        if(g.name==="Poltergeist") score += w.haunted;
-        else score += Math.round(w.haunted * 0.10);
-      }
-      else if(h==="Doors slam / closes doors"){
-        score += Math.round(w.haunted * 0.20);
-      }
-      else if(h==="Lights flickered"){
-        if(g.name==="Vuult" || g.name==="Mare") score += w.haunted;
-        else score += Math.round(w.haunted * 0.12);
-      }
-      else if(h==="No breaker box / breaker weird"){
-        if(g.name==="Vuult") score += w.haunted;
-        else score += Math.round(w.haunted * 0.08);
-      }
-      else if(h==="Footsteps (heavy / clear)"){
-        if(g.name==="Revenant") score += w.haunted;
-        else score += Math.round(w.haunted * 0.10);
-      }
-      else if(h==="Haunted object vibe (cursed item found)"){
-        score += Math.round(w.haunted * 0.15);
-      }
-    }
-  }
-
-  // Normalize to 0..100-ish for display
-  // Allow negative score, but percent clamps to 0..100
-  const raw = score;
-  const denom = Math.max(1, maxPossible);
-  let pct = Math.round((raw / denom) * 100);
-  pct = Math.max(0, Math.min(100, pct));
-
-  return { score: raw, pct, conflicts };
+  // Normalize to 0..100-ish confidence later
+  return { score, maxPossible, contradictions };
 }
 
-function formatEvidenceBadges(arr){
-  return arr.map(x=>`<span class="badge">${x}</span>`).join("");
-}
-
-/* -----------------------------
-   RENDER
-------------------------------*/
-function render(){
-  // count picks
-  let picks=0;
-  for(const v of state.picks.values()){
-    if(v==="yes" || v==="no") picks++;
-  }
-  picks += state.haunted.size;
-  pickedCount.textContent = `${picks} pick${picks===1?"":"s"}`;
-
-  // compute + sort
-  const ranked = GHOSTS.map(g=>{
+function computeRank(){
+  const results = GHOSTS.map(g=>{
     const s = scoreGhost(g);
-    return { ...g, ...s };
-  }).sort((a,b)=> b.pct - a.pct || b.score - a.score);
+    return { ghost:g, ...s };
+  });
 
-  // top area
-  if(!hasAnySelection()){
-    topSlot.innerHTML = `
-      <div class="emptyState">
-        Nothing selected yet.<br>
-        Start clicking evidence/clues and I’ll rank the ghosts.
-      </div>`;
-    ghostDetails.innerHTML = "";
-    pctVal.textContent = "0%";
-    pctFill.style.width = "0%";
-  }else{
-    const top = ranked[0];
-    topSlot.innerHTML = `
-      <div>
-        <h3 class="ghostName">${top.name}</h3>
-        <div class="badgeRow">${formatEvidenceBadges(top.evidence)}</div>
-        <div style="margin-top:10px;" class="muted">Based on what you selected so far.</div>
-      </div>
-    `;
-
-    pctVal.textContent = `${top.pct}%`;
-    pctFill.style.width = `${top.pct}%`;
-
-    ghostDetails.innerHTML = `
-      <div class="panel" style="margin-top:14px; box-shadow:none;">
-        <div class="panelHeader"><h2>Ghost description</h2></div>
-        <div class="content" style="padding-top:12px;">
-          <div style="color:rgba(255,255,255,.88); line-height:1.45;">
-            ${top.desc}
-          </div>
-          <div style="margin-top:12px;" class="sectionTitle">
-            <span>Quick double-check</span>
-            <span class="tiny">What matches</span>
-          </div>
-          <div class="row">
-            ${(top.cluesYes||[]).slice(0,10).map(c=>`<span class="badge">✅ ${c}</span>`).join("")}
-          </div>
-        </div>
-      </div>
-    `;
+  // If nothing selected, keep empty
+  if(!anySelected()){
+    return { ranked: results, best: null, confidence: 0 };
   }
 
-  // list
-  rankList.innerHTML = ranked.map(g=>{
-    const tags = g.evidence.slice(0,3).map(x=>`<span class="badge">${x}</span>`).join("");
+  // Convert raw score to a stable 0-100
+  // We use the best candidate as “100-ish” and scale others
+  results.sort((a,b)=> b.score - a.score);
+
+  const best = results[0];
+  const bestScore = best.score;
+
+  // If bestScore is negative, treat as 0 confidence
+  const confidence = Math.max(0, Math.min(100, Math.round(
+    best.maxPossible === 0 ? 0 : (best.score / (best.maxPossible)) * 100
+  )));
+
+  return { ranked: results, best, confidence };
+}
+
+function setTipChips(bestGhost){
+  const tipsBar = document.getElementById("tipsBar");
+
+  // keep your existing chips but add a couple dynamic ones
+  const chips = [
+    { text:`Tip: Salt footprints = yes → NOT Wraith` },
+    { text:`Tip: Parabolic screech = yes → Banshee` },
+    { text:`Tip: Water on + invisible → Strigoi` },
+  ];
+
+  if(bestGhost){
+    if(bestGhost.name==="Mare") chips.unshift({ text:`Tip: Candles blown out + lights off a lot → Mare vibe` });
+    if(bestGhost.name==="Vuult") chips.unshift({ text:`Tip: Power/lighting acting weird → Vuult vibe` });
+    if(bestGhost.name==="ZoZo") chips.unshift({ text:`Tip: Super early hunts + high activity → ZoZo/Demon zone` });
+    if(bestGhost.name==="Nook") chips.unshift({ text:`Tip: Items missing / room follows items → Nook` });
+  }
+
+  tipsBar.innerHTML = chips.slice(0,4).map(c=>`
+    <div class="chip"><span class="glowdot"></span><span>${c.text}</span></div>
+  `).join("");
+}
+
+function pillHTML(key, kind){
+  const st = (kind==="evidence" ? state.evidence[key] : state.clues[key]) || "unknown";
+  return `
+    <div class="pill" data-kind="${kind}" data-key="${escapeHtml(key)}" data-state="${st}">
+      <span class="dot"></span>
+      <span>${escapeHtml(key)}</span>
+    </div>
+  `;
+}
+
+function escapeHtml(s){
+  return String(s)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function setSelectOptions(sel, items, getLabel){
+  sel.innerHTML = items.map(it=>{
+    const v = typeof it === "string" ? it : it.id;
+    const label = typeof it === "string" ? it : (getLabel ? getLabel(it) : it.name);
+    return `<option value="${escapeHtml(v)}">${escapeHtml(label)}</option>`;
+  }).join("");
+}
+
+function updateUI(){
+  // Render pills
+  document.getElementById("evidenceGrid").innerHTML = EVIDENCE.map(k=>pillHTML(k,"evidence")).join("");
+  document.getElementById("clueGrid").innerHTML = CLUES.map(k=>pillHTML(k,"clue")).join("");
+
+  // Compute
+  const { ranked, best, confidence } = computeRank();
+
+  // Top pick panel
+  const emptyTop = document.getElementById("emptyTop");
+  const topPick = document.getElementById("topPick");
+
+  if(!best){
+    emptyTop.style.display = "block";
+    topPick.style.display = "none";
+    document.getElementById("confidencePct").textContent = "0%";
+    document.getElementById("confidenceBar").style.width = "0%";
+    document.getElementById("countHint").textContent = "Pick something to rank ghosts";
+    document.getElementById("rankList").innerHTML = `
+      <div class="emptyState">No picks yet. Tap evidence/clues on the left.</div>
+    `;
+    setTipChips(null);
+    return;
+  }
+
+  emptyTop.style.display = "none";
+  topPick.style.display = "block";
+  document.getElementById("topName").textContent = best.ghost.name;
+
+  // Evidence tags
+  const tagWrap = document.getElementById("topEvidenceTags");
+  tagWrap.innerHTML = best.ghost.evidence.map(ev=>`<span class="tag"><strong>${escapeHtml(ev)}</strong></span>`).join("");
+
+  // Description + tips
+  const descBox = document.getElementById("topDescBox");
+  const tipLines = (best.ghost.tips || []).map(t=>`• ${escapeHtml(t)}`).join("<br>");
+  descBox.innerHTML = `
+    <b>What it is:</b> ${escapeHtml(best.ghost.desc || "—")}<br><br>
+    <b>Quick tips:</b><br>${tipLines || "—"}
+  `;
+
+  // Confidence
+  document.getElementById("confidencePct").textContent = confidence + "%";
+  document.getElementById("confidenceBar").style.width = confidence + "%";
+
+  document.getElementById("countHint").textContent = `${ranked.length} ghosts ranked`;
+
+  // Ranked list (top 8)
+  const topN = ranked.slice(0,8);
+
+  // Convert each candidate into a relative % next to best (feels nicer)
+  const bestScore = topN[0].score || 1;
+
+  document.getElementById("rankList").innerHTML = topN.map((r,i)=>{
+    const relative = Math.max(0, Math.min(100, Math.round((r.score / bestScore) * 100)));
+    const small = r.ghost.desc ? r.ghost.desc : "";
+    const minis = [
+      ...r.ghost.evidence.slice(0,3).map(x=>`<span class="miniTag">${escapeHtml(x)}</span>`),
+      ...(r.contradictions>0 ? [`<span class="miniTag" style="border-color:rgba(255,94,106,.35);color:rgba(255,94,106,.95)">Contradictions: ${r.contradictions}</span>`] : [])
+    ].join("");
     return `
       <div class="ghostRow">
-        <div class="leftInfo">
-          <p class="gTitle">${g.name}</p>
-          <div class="gSub">${tags}</div>
-          <div class="tiny" style="margin-top:4px;">${g.desc}</div>
+        <div class="left">
+          <p class="gname">${escapeHtml(r.ghost.name)}</p>
+          <div class="small">${escapeHtml(small).slice(0,140)}${small.length>140 ? "…" : ""}</div>
+          <div class="miniTags">${minis}</div>
         </div>
         <div class="scoreBox">
-          <b>${g.pct}%</b>
-          ${g.conflicts ? `<span style="color:rgba(255,77,109,.9)">conflicts: ${g.conflicts}</span>` : `<span class="tiny">no conflicts</span>`}
+          <div class="pct">${relative}%</div>
+          <div class="conf">${i===0 ? "Top match" : "Relative"}</div>
         </div>
       </div>
     `;
   }).join("");
+
+  setTipChips(best.ghost);
 }
 
-render();
+/* ----------------------------
+   Explain boxes
+---------------------------- */
+
+function explainCursed(){
+  const box = document.getElementById("cursedExplainBox");
+  const obj = CURSED_OBJECTS.find(x=>x.id===state.cursed) || CURSED_OBJECTS[0];
+  box.classList.add("show");
+  box.innerHTML = `<b>${escapeHtml(obj.name)}:</b> ${escapeHtml(obj.desc)}`;
+}
+
+function explainTarot(){
+  const box = document.getElementById("tarotExplainBox");
+  const t = TAROT.find(x=>x.id===state.tarot) || TAROT[0];
+  box.classList.add("show");
+  box.innerHTML = `<b>${escapeHtml(t.name)}:</b> ${escapeHtml(t.desc)}`;
+}
+
+/* ----------------------------
+   Share link (so you can send to friends)
+---------------------------- */
+
+function encodeState(){
+  const payload = {
+    h: state.house,
+    d: state.difficulty,
+    e: state.evidence,
+    c: state.clues,
+    co: state.cursed,
+    t: state.tarot
+  };
+  const json = JSON.stringify(payload);
+  return btoa(unescape(encodeURIComponent(json)));
+}
+
+function decodeState(hash){
+  try{
+    const json = decodeURIComponent(escape(atob(hash)));
+    const payload = JSON.parse(json);
+
+    if(payload.h) state.house = payload.h;
+    if(payload.d) state.difficulty = payload.d;
+
+    if(payload.e){
+      for(const k of Object.keys(state.evidence)){
+        if(payload.e[k]) state.evidence[k] = payload.e[k];
+      }
+    }
+    if(payload.c){
+      for(const k of Object.keys(state.clues)){
+        if(payload.c[k]) state.clues[k] = payload.c[k];
+      }
+    }
+    if(payload.co) state.cursed = payload.co;
+    if(payload.t) state.tarot = payload.t;
+
+  }catch(e){}
+}
+
+/* ----------------------------
+   Init
+---------------------------- */
+
+function init(){
+  // Fill selects
+  const houseSel = document.getElementById("houseSelect");
+  setSelectOptions(houseSel, HOUSES);
+
+  const diffSel = document.getElementById("difficultySelect");
+  setSelectOptions(diffSel, DIFFICULTIES, d=>d.name);
+
+  const cursedSel = document.getElementById("cursedSelect");
+  setSelectOptions(cursedSel, CURSED_OBJECTS, o=>o.name);
+
+  const tarotSel = document.getElementById("tarotSelect");
+  setSelectOptions(tarotSel, TAROT, t=>t.name);
+
+  // Load from URL hash if exists
+  if(location.hash && location.hash.length>1){
+    decodeState(location.hash.slice(1));
+  }
+
+  // Apply initial select values
+  houseSel.value = state.house;
+  diffSel.value = state.difficulty;
+  cursedSel.value = state.cursed;
+  tarotSel.value = state.tarot;
+
+  // Listeners
+  document.addEventListener("click", (e)=>{
+    const pill = e.target.closest(".pill");
+    if(!pill) return;
+
+    const kind = pill.getAttribute("data-kind");
+    const key = pill.getAttribute("data-key");
+
+    if(kind==="evidence"){
+      state.evidence[key] = cycleState(state.evidence[key], key);
+    }else{
+      state.clues[key] = cycleState(state.clues[key], key);
+    }
+
+    updateUI();
+  });
+
+  houseSel.addEventListener("change", ()=>{
+    state.house = houseSel.value;
+    updateUI();
+  });
+  diffSel.addEventListener("change", ()=>{
+    state.difficulty = diffSel.value;
+    updateUI();
+  });
+  cursedSel.addEventListener("change", ()=>{
+    state.cursed = cursedSel.value;
+    // hide explanation until they hit explain again (cleaner)
+    document.getElementById("cursedExplainBox").classList.remove("show");
+    updateUI();
+  });
+  tarotSel.addEventListener("change", ()=>{
+    state.tarot = tarotSel.value;
+    document.getElementById("tarotExplainBox").classList.remove("show");
+    updateUI();
+  });
+
+  document.getElementById("cursedExplainBtn").addEventListener("click", explainCursed);
+  document.getElementById("tarotExplainBtn").addEventListener("click", explainTarot);
+
+  document.getElementById("resetBtn").addEventListener("click", ()=>{
+    for(const k of Object.keys(state.evidence)) state.evidence[k] = "unknown";
+    for(const k of Object.keys(state.clues)) state.clues[k] = "unknown";
+    state.cursed = "none";
+    state.tarot = "none";
+    document.getElementById("cursedSelect").value = "none";
+    document.getElementById("tarotSelect").value = "none";
+    document.getElementById("cursedExplainBox").classList.remove("show");
+    document.getElementById("tarotExplainBox").classList.remove("show");
+    location.hash = "";
+    updateUI();
+  });
+
+  document.getElementById("copyBtn").addEventListener("click", async ()=>{
+    const hash = encodeState();
+    const url = location.origin + location.pathname + "#" + hash;
+    try{
+      await navigator.clipboard.writeText(url);
+      alert("Copied share link!");
+    }catch(e){
+      prompt("Copy this link:", url);
+    }
+  });
+
+  // First paint
+  updateUI();
+}
+
+init();
 </script>
 </body>
 </html>
